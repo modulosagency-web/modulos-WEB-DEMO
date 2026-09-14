@@ -5,313 +5,1133 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Grand Aurelia · Luxury Hotel & Resorts</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    /* ============================================================
+       CINEMATIC INTRO — Manual Next · Highlighted Text · Popup Button
+       ============================================================ */
+    #cineIntro {
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      background: #030201;
+      overflow: hidden;
+      transition: opacity 1.6s ease, visibility 1.6s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', sans-serif;
+      color: #F5E6C0;
+    }
+    #cineIntro.hide {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    /* --- Deep 3D background --- */
+    .cine-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 25% 30%, rgba(198, 161, 91, 0.28) 0%, transparent 55%),
+        radial-gradient(ellipse at 75% 70%, rgba(198, 161, 91, 0.18) 0%, transparent 55%),
+        radial-gradient(ellipse at 50% 50%, #15110C 0%, #030201 80%);
+    }
+
+    .cine-grid {
+      position: absolute;
+      inset: -40% -15% -15% -15%;
+      background-image:
+        linear-gradient(rgba(198, 161, 91, 0.16) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(198, 161, 91, 0.16) 1px, transparent 1px);
+      background-size: 80px 80px;
+      transform: perspective(700px) rotateX(63deg);
+      animation: cineGrid 16s linear infinite;
+      opacity: 0.55;
+      mask-image: linear-gradient(to top, #000 20%, transparent 80%);
+      -webkit-mask-image: linear-gradient(to top, #000 20%, transparent 80%);
+    }
+    @keyframes cineGrid {
+      0%   { transform: perspective(700px) rotateX(63deg) translateY(0); }
+      100% { transform: perspective(700px) rotateX(63deg) translateY(80px); }
+    }
+
+    .cine-grid-top {
+      position: absolute;
+      inset: -15% -15% -40% -15%;
+      background-image:
+        linear-gradient(rgba(198, 161, 91, 0.10) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(198, 161, 91, 0.10) 1px, transparent 1px);
+      background-size: 80px 80px;
+      transform: perspective(700px) rotateX(-63deg);
+      animation: cineGridTop 16s linear infinite;
+      opacity: 0.35;
+      mask-image: linear-gradient(to bottom, #000 20%, transparent 80%);
+      -webkit-mask-image: linear-gradient(to bottom, #000 20%, transparent 80%);
+    }
+    @keyframes cineGridTop {
+      0%   { transform: perspective(700px) rotateX(-63deg) translateY(0); }
+      100% { transform: perspective(700px) rotateX(-63deg) translateY(-80px); }
+    }
+
+    .cine-particle {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #FFF6DC, #C6A15B 45%, #7A5F20 100%);
+      box-shadow: 0 0 40px rgba(198, 161, 91, 0.7);
+      animation: cineFloat 11s ease-in-out infinite;
+    }
+    .cp1 { width: 16px;  height: 16px;  top: 18%;   left: 12%;  animation-delay: 0s; }
+    .cp2 { width: 9px;   height: 9px;   top: 74%;   left: 84%;  animation-delay: -2s; }
+    .cp3 { width: 26px;  height: 26px;  bottom: 10%;left: 22%;  opacity: 0.6; animation-delay: -4s; }
+    .cp4 { width: 12px;  height: 12px;  top: 32%;   right: 18%; animation-delay: -1s; }
+    .cp5 { width: 7px;   height: 7px;   top: 55%;   left: 58%;  animation-delay: -3s; }
+    .cp6 { width: 20px;  height: 20px;  top: 10%;   right: 14%; opacity: 0.75; animation-delay: -5s; }
+    .cp7 { width: 11px;  height: 11px;  bottom: 22%;right: 30%; animation-delay: -6s; }
+    .cp8 { width: 14px;  height: 14px;  top: 48%;   left: 30%;  opacity: 0.8; animation-delay: -7s; }
+
+    @keyframes cineFloat {
+      0%, 100% { transform: translateY(0) translateX(0) scale(1); }
+      50%      { transform: translateY(-50px) translateX(25px) scale(1.18); }
+    }
+
+    .cine-bar {
+      position: absolute;
+      left: 0; right: 0;
+      height: 70px;
+      background: #000;
+      z-index: 20;
+      animation: barSlide 1.4s cubic-bezier(0.2, 0.9, 0.4, 1) forwards;
+    }
+    .cine-bar-top { top: 0; transform: translateY(-100%); }
+    .cine-bar-bottom { bottom: 0; transform: translateY(100%); }
+    @keyframes barSlide { to { transform: translateY(0); } }
+
+    .cine-beam {
+      position: absolute;
+      top: -30%;
+      left: -40%;
+      width: 32%;
+      height: 160%;
+      background: linear-gradient(90deg, transparent, rgba(198, 161, 91, 0.22), transparent);
+      transform: rotate(18deg);
+      animation: cineBeam 7s ease-in-out infinite;
+      z-index: 6;
+    }
+    @keyframes cineBeam {
+      0%   { left: -40%; }
+      100% { left: 140%; }
+    }
+
+    .cine-beam-2 {
+      position: absolute;
+      top: -30%;
+      right: -40%;
+      width: 25%;
+      height: 160%;
+      background: linear-gradient(90deg, transparent, rgba(233, 215, 167, 0.12), transparent);
+      transform: rotate(-18deg);
+      animation: cineBeam2 9s ease-in-out infinite;
+      z-index: 5;
+    }
+    @keyframes cineBeam2 {
+      0%   { right: -40%; }
+      100% { right: 140%; }
+    }
+
+    .cine-content {
+      position: relative;
+      z-index: 30;
+      text-align: center;
+      padding: 0 24px;
+      max-width: 1000px;
+      width: 100%;
+    }
+
+    .cine-slide { display: none; }
+    .cine-slide.active {
+      display: block;
+      animation: slideEnter 1s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+    }
+    @keyframes slideEnter {
+      from { opacity: 0; transform: translateY(40px) scale(0.97); filter: blur(12px); }
+      to   { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+    }
+
+    .cine-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.72rem;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      color: #C6A15B;
+      font-weight: 600;
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: fadeInUp 0.9s cubic-bezier(0.2, 0.9, 0.4, 1) 0.3s forwards;
+    }
+    .cine-label::before,
+    .cine-label::after {
+      content: '';
+      width: 40px;
+      height: 1px;
+      background: #C6A15B;
+      opacity: 0.6;
+    }
+
+    .cine-crown {
+      font-size: 3.2rem;
+      color: #C6A15B;
+      margin-bottom: 24px;
+      display: inline-block;
+      animation: crownIntro 1.4s cubic-bezier(0.2, 0.9, 0.3, 1.5) 0.2s both,
+                 crownPulse 3s ease-in-out 1.8s infinite;
+      text-shadow: 0 0 60px rgba(198, 161, 91, 0.9), 0 0 120px rgba(198, 161, 91, 0.5);
+    }
+    @keyframes crownIntro {
+      from { opacity: 0; transform: scale(0.3) rotate(-35deg); filter: blur(10px); }
+      to   { opacity: 1; transform: scale(1) rotate(0); filter: blur(0); }
+    }
+    @keyframes crownPulse {
+      0%, 100% { transform: scale(1); }
+      50%      { transform: scale(1.08); }
+    }
+
+    .cine-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 5vw, 3.4rem);
+      font-weight: 500;
+      line-height: 1.25;
+      letter-spacing: 0.3px;
+      margin-bottom: 22px;
+      text-shadow: 0 4px 50px rgba(198, 161, 91, 0.3);
+    }
+    .cine-title .w {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(70px) rotateX(-90deg);
+      transform-origin: 50% 100%;
+      filter: blur(14px);
+      animation: wordReveal 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+    }
+    @keyframes wordReveal {
+      to {
+        opacity: 1;
+        transform: translateY(0) rotateX(0);
+        filter: blur(0);
+      }
+    }
+    .cine-title .highlight {
+      color: #C6A15B;
+      font-weight: 600;
+      text-shadow: 0 0 40px rgba(198, 161, 91, 0.6);
+    }
+
+    .cine-divider {
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #C6A15B, #F5E6C0, #C6A15B, transparent);
+      margin: 0 auto 26px;
+      animation: dividerGrow 1.5s cubic-bezier(0.2, 0.9, 0.4, 1) 0.6s forwards;
+    }
+    @keyframes dividerGrow {
+      to { width: 260px; }
+    }
+
+    /* ---- HIGHLIGHTED SUB TEXT for easy reading ---- */
+    .cine-sub {
+      font-family: 'Inter', sans-serif;
+      font-size: clamp(0.95rem, 1.6vw, 1.15rem);
+      color: #E8DFD0;
+      line-height: 1.85;
+      font-weight: 400;
+      letter-spacing: 0.3px;
+      max-width: 720px;
+      margin: 0 auto;
+      opacity: 0;
+      animation: fadeInUp 1.2s cubic-bezier(0.2, 0.9, 0.4, 1) 1s forwards;
+    }
+
+    /* Highlighted key words inside subtitle */
+    .cine-sub .key {
+      background: linear-gradient(180deg, transparent 55%, rgba(198, 161, 91, 0.35) 55%);
+      color: #FFFFFF;
+      font-weight: 600;
+      padding: 2px 4px;
+      border-radius: 3px;
+    }
+
+    .cine-sub .strong-gold {
+      color: #F5E6C0;
+      font-weight: 600;
+      text-shadow: 0 0 20px rgba(198, 161, 91, 0.5);
+    }
+
+    /* Warning badge — big, clear, easy to read */
+    .warn-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 26px;
+      padding: 14px 28px;
+      background: linear-gradient(135deg, rgba(198, 40, 40, 0.15), rgba(198, 161, 91, 0.15));
+      border: 1.5px solid rgba(198, 161, 91, 0.6);
+      border-radius: 50px;
+      font-size: 0.95rem;
+      color: #FFFFFF;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      box-shadow: 0 8px 30px rgba(198, 161, 91, 0.25);
+      animation: badgePulse 2.5s ease-in-out infinite;
+      opacity: 0;
+      animation: fadeInUp 1s ease 1.6s forwards, badgePulse 2.5s ease-in-out 2.6s infinite;
+    }
+    .warn-badge i {
+      color: #C6A15B;
+      font-size: 1.1rem;
+    }
+    @keyframes badgePulse {
+      0%, 100% { box-shadow: 0 8px 30px rgba(198, 161, 91, 0.25); }
+      50%      { box-shadow: 0 8px 45px rgba(198, 161, 91, 0.55); }
+    }
+
+    /* Team credits */
+    .team-credits {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin: 36px 0 8px;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeInUp 1.2s cubic-bezier(0.2, 0.9, 0.4, 1) 1.2s forwards;
+    }
+    .team-card {
+      text-align: center;
+      padding: 26px 24px;
+      background: rgba(198, 161, 91, 0.08);
+      border: 1.5px solid rgba(198, 161, 91, 0.35);
+      border-radius: 18px;
+      min-width: 190px;
+      transition: all 0.4s ease;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+    .team-card:hover {
+      transform: translateY(-8px) scale(1.03);
+      background: rgba(198, 161, 91, 0.14);
+      border-color: rgba(198, 161, 91, 0.8);
+      box-shadow: 0 25px 60px rgba(198, 161, 91, 0.3);
+    }
+    .team-avatar {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      margin: 0 auto 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: #0A0908;
+      background: linear-gradient(135deg, #F5E6C0, #C6A15B);
+      box-shadow: 0 0 35px rgba(198, 161, 91, 0.6);
+      border: 2px solid rgba(255, 255, 255, 0.25);
+    }
+    .team-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      color: #FFFFFF;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .team-role {
+      font-size: 0.72rem;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: #C6A15B;
+      font-weight: 600;
+    }
+
+    .finale-title {
+      font-size: clamp(2rem, 6vw, 4rem) !important;
+      line-height: 1.15 !important;
+    }
+    .finale-sub {
+      font-size: clamp(1rem, 1.8vw, 1.2rem) !important;
+      color: #F5E6C0 !important;
+      letter-spacing: 0.5px;
+      font-weight: 400 !important;
+    }
+
+    /* ============ CONTROLS with POPUP button ============ */
+    .cine-controls {
+      margin-top: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeInUp 1s ease 1.8s forwards;
+    }
+
+    .cine-dots {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .cine-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(198, 161, 91, 0.25);
+      transition: all 0.5s cubic-bezier(0.2, 0.9, 0.4, 1);
+      cursor: pointer;
+    }
+    .cine-dot:hover { background: rgba(198, 161, 91, 0.5); }
+    .cine-dot.active {
+      background: #C6A15B;
+      width: 28px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(198, 161, 91, 0.8);
+    }
+
+    /* ---- POPUP NEXT BUTTON ---- */
+    .cine-next-wrap {
+      position: relative;
+      display: inline-block;
+    }
+
+    /* Bouncing hint arrow + "Click Next" tooltip */
+    .cine-hint {
+      position: absolute;
+      top: -68px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #0A0908;
+      color: #F5E6C0;
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      border: 1.5px solid #C6A15B;
+      box-shadow: 0 10px 30px rgba(198, 161, 91, 0.5);
+      animation: hintBounce 1.6s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 5;
+    }
+    .cine-hint::after {
+      content: '';
+      position: absolute;
+      bottom: -9px;
+      left: 50%;
+      transform: translateX(-50%) rotate(45deg);
+      width: 16px;
+      height: 16px;
+      background: #0A0908;
+      border-right: 1.5px solid #C6A15B;
+      border-bottom: 1.5px solid #C6A15B;
+    }
+    .cine-hint i {
+      color: #C6A15B;
+      margin-right: 6px;
+      animation: hintArrow 1.6s ease-in-out infinite;
+    }
+    @keyframes hintBounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50%      { transform: translateX(-50%) translateY(-10px); }
+    }
+    @keyframes hintArrow {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(3px); }
+    }
+
+    /* The actual NEXT button with strong popup animation */
+    .cine-next {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      background: linear-gradient(135deg, #C6A15B, #A8893A);
+      color: #0A0908;
+      border: none;
+      padding: 18px 44px;
+      border-radius: 60px;
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      cursor: pointer;
+      box-shadow: 0 12px 40px rgba(198, 161, 91, 0.55),
+                  0 0 0 0 rgba(198, 161, 91, 0.7);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      animation: btnPulse 2s ease-in-out infinite;
+      z-index: 2;
+    }
+    @keyframes btnPulse {
+      0%, 100% {
+        box-shadow: 0 12px 40px rgba(198, 161, 91, 0.55),
+                    0 0 0 0 rgba(198, 161, 91, 0.7);
+        transform: scale(1);
+      }
+      50% {
+        box-shadow: 0 14px 45px rgba(198, 161, 91, 0.75),
+                    0 0 0 14px rgba(198, 161, 91, 0);
+        transform: scale(1.05);
+      }
+    }
+    .cine-next::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent, rgba(255,255,255,0.5), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.8s ease;
+    }
+    .cine-next:hover::before { transform: translateX(100%); }
+    .cine-next:hover {
+      transform: translateY(-3px) scale(1.08);
+      box-shadow: 0 20px 60px rgba(198, 161, 91, 0.85),
+                  0 0 0 20px rgba(198, 161, 91, 0);
+      background: linear-gradient(135deg, #F5E6C0, #C6A15B);
+      animation-play-state: paused;
+    }
+    .cine-next:active {
+      transform: scale(0.98);
+    }
+    .cine-next i {
+      transition: transform 0.3s ease;
+      font-size: 1.05rem;
+    }
+    .cine-next:hover i {
+      transform: translateX(6px);
+    }
+
+    /* Skip */
+    .cine-skip {
+      position: absolute;
+      top: 88px;
+      right: 28px;
+      z-index: 40;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(198, 161, 91, 0.4);
+      color: #C6A15B;
+      padding: 9px 22px;
+      border-radius: 40px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.8px;
+      cursor: pointer;
+      backdrop-filter: blur(6px);
+      transition: all 0.3s ease;
+    }
+    .cine-skip:hover {
+      background: rgba(198, 161, 91, 0.15);
+      border-color: #C6A15B;
+      color: #F5E6C0;
+      transform: translateY(-2px);
+    }
+
+    .cine-vignette {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.9) 100%);
+      pointer-events: none;
+      z-index: 15;
+    }
+
+    /* Progress bar */
+    .cine-progress {
+      position: absolute;
+      bottom: 90px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 240px;
+      height: 3px;
+      background: rgba(198, 161, 91, 0.15);
+      border-radius: 10px;
+      overflow: hidden;
+      z-index: 30;
+      opacity: 0;
+      animation: fadeInUp 1s ease 1.8s forwards;
+    }
+    .cine-progress span {
+      display: block;
+      height: 100%;
+      width: 25%;
+      background: linear-gradient(90deg, #A8893A, #C6A15B, #F5E6C0);
+      border-radius: 10px;
+      transition: width 0.7s cubic-bezier(0.2, 0.9, 0.4, 1);
+      box-shadow: 0 0 12px rgba(198, 161, 91, 0.6);
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Mobile */
+    @media (max-width: 720px) {
+      .cine-bar { height: 44px; }
+      .cine-crown { font-size: 2.2rem; margin-bottom: 16px; }
+      .cine-skip { top: 60px; right: 16px; padding: 7px 16px; font-size: 0.7rem; }
+      .cine-label { font-size: 0.6rem; letter-spacing: 3.5px; margin-bottom: 20px; }
+      .cine-label::before, .cine-label::after { width: 22px; }
+      .cine-controls { margin-top: 38px; gap: 18px; }
+      .cine-next { padding: 15px 32px; font-size: 0.9rem; }
+      .cine-progress { width: 160px; bottom: 62px; }
+      .team-credits { gap: 14px; margin-top: 24px; }
+      .team-card { min-width: 130px; padding: 16px 12px; }
+      .team-avatar { width: 52px; height: 52px; font-size: 1.25rem; margin-bottom: 10px; }
+      .team-name { font-size: 0.95rem; }
+      .team-role { font-size: 0.6rem; letter-spacing: 1.5px; }
+      .cp3, .cp5, .cp8 { display: none; }
+      .cine-hint { top: -58px; padding: 8px 14px; font-size: 0.75rem; }
+      .warn-badge { padding: 11px 20px; font-size: 0.82rem; }
+    }
+  </style>
 </head>
 <body>
 
-<!-- ============ CINEMATIC INTRO ============ -->
-<div id="cinematicIntro">
-  <button class="intro-skip" id="introSkip"><i class="fas fa-forward"></i> Skip Intro</button>
+<!-- ============================================================
+     CINEMATIC INTRO — Manual Next · Highlighted Text
+     ============================================================ -->
+<div id="cineIntro">
+  <div class="cine-bar cine-bar-top"></div>
+  <div class="cine-bar cine-bar-bottom"></div>
 
-  <div class="intro-bg">
-    <div class="intro-grid"></div>
-    <div class="intro-beam"></div>
-    <div class="intro-orb orb-1"></div>
-    <div class="intro-orb orb-2"></div>
-    <div class="intro-orb orb-3"></div>
-    <div class="intro-orb orb-4"></div>
-  </div>
+  <button class="cine-skip" id="cineSkip">
+    <i class="fas fa-forward"></i>&nbsp; Skip Intro
+  </button>
 
-  <div class="intro-content">
-    <div class="intro-crown"><i class="fas fa-crown"></i></div>
-    <div class="intro-line"></div>
+  <div class="cine-bg"></div>
+  <div class="cine-grid"></div>
+  <div class="cine-grid-top"></div>
+  <div class="cine-beam"></div>
+  <div class="cine-beam-2"></div>
+  <div class="cine-vignette"></div>
 
-    <h1 class="intro-title">
-      <span class="word" style="animation-delay: 1.5s;">A</span>
-      <span class="word" style="animation-delay: 1.75s;">Cinematic</span>
-      <span class="word" style="animation-delay: 2.0s;">Hotel</span>
-      <span class="word" style="animation-delay: 2.25s;">Experience</span>
-    </h1>
+  <div class="cine-particle cp1"></div>
+  <div class="cine-particle cp2"></div>
+  <div class="cine-particle cp3"></div>
+  <div class="cine-particle cp4"></div>
+  <div class="cine-particle cp5"></div>
+  <div class="cine-particle cp6"></div>
+  <div class="cine-particle cp7"></div>
+  <div class="cine-particle cp8"></div>
 
-    <p class="intro-sub">
-      This website is a demonstration project created by <strong style="color:#C6A15B;">Modulos Agency Team</strong>.<br>
-      It is not a real booking platform — it exists solely to showcase our design and development work.
-    </p>
+  <div class="cine-content">
 
-    <div class="intro-progress"><span></span></div>
-
-    <div class="intro-footer">Crafted by Modulos Agency · 2025</div>
-  </div>
-</div>
-
-<div class="demo-banner">
-  <i class="fas fa-flask"></i> <strong>Modulos Team Web Demo</strong> · All content is for demonstration only.
-</div>
-
-<header class="site-header">
-  <div class="container header-inner">
-    <a href="index.html" class="logo"><i class="fas fa-crown"></i> Grand <span>Aurelia</span></a>
-    <nav class="nav-links" id="navLinks">
-      <a href="index.html" class="active">Home</a>
-      <a href="rooms.html">Rooms</a>
-      <a href="suites.html">Suites</a>
-      <a href="dining.html">Dining</a>
-      <a href="spa.html">Spa</a>
-      <a href="offers.html">Offers</a>
-      <a href="contact.html">Contact</a>
-    </nav>
-    <div class="header-actions">
-      <a onclick="showToast('Calling +1 800 555 0199...')" class="btn btn-outline-gold" style="cursor:pointer;">
-        <i class="fas fa-phone-alt"></i> +1 800 555 0199
-      </a>
-      <a onclick="openBookingModal()" class="btn btn-gold" style="cursor:pointer;">
-        <i class="fas fa-calendar-check"></i> Book Now
-      </a>
-      <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
-    </div>
-  </div>
-</header>
-
-<section class="booking-bar-wrap" style="padding-top:80px;">
-  <div class="container hero-grid">
-    <div class="hero-content">
-      <h1><i class="fas fa-gem"></i> Experience <br> Timeless Luxury</h1>
-      <p>Where golden elegance meets modern comfort. Indulge in our curated collection of rooms & suites.</p>
-      <div class="hero-stats">
-        <div><span class="stat-number">150+</span><br><span class="stat-label">Luxury Rooms</span></div>
-        <div><span class="stat-number">4.9</span><br><span class="stat-label">Guest Rating</span></div>
-        <div><span class="stat-number">24/7</span><br><span class="stat-label">Concierge</span></div>
+    <!-- ============ SLIDE 1 ============ -->
+    <div class="cine-slide active" data-slide="0">
+      <div class="cine-label">Modulos Agency Presents</div>
+      <div class="cine-crown"><i class="fas fa-crown"></i></div>
+      <h1 class="cine-title">
+        <span class="w" style="animation-delay: 0.6s;">Welcome</span>
+        <span class="w" style="animation-delay: 0.8s;">to</span>
+        <span class="w highlight" style="animation-delay: 1.0s;">Grand</span>
+        <span class="w highlight" style="animation-delay: 1.2s;">Aurelia</span>
+      </h1>
+      <div class="cine-divider"></div>
+      <p class="cine-sub">
+        A cinematic <span class="key">hotel booking experience</span> —
+        crafted with precision, elegance, and heart by the
+        <span class="strong-gold">Modulos Team</span>.
+      </p>
+      <div class="warn-badge">
+        <i class="fas fa-exclamation-triangle"></i>
+        This is a <span style="color:#F5E6C0;">DEMO website</span> — not a real booking platform
       </div>
     </div>
-    <div class="hero-image">
-      <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1170&auto=format&fit=crop" alt="Luxury hotel">
-    </div>
-  </div>
 
-  <div class="container">
-    <div class="booking-bar">
-      <div class="booking-fields">
-        <div class="booking-field">
-          <i class="fas fa-calendar-alt"></i>
-          <input type="date" id="quickCheckin">
-        </div>
-        <div class="booking-field">
-          <i class="fas fa-calendar-alt"></i>
-          <input type="date" id="quickCheckout">
-        </div>
-        <div class="booking-field">
-          <i class="fas fa-user-friends"></i>
-          <select id="quickGuests">
-            <option value="1">1 Guest</option>
-            <option value="2" selected>2 Guests</option>
-            <option value="3">3 Guests</option>
-            <option value="4">4 Guests</option>
-            <option value="5">5+ Guests</option>
-          </select>
-        </div>
-        <div class="booking-field">
-          <i class="fas fa-snowflake"></i>
-          <select id="quickType">
-            <option value="all">All Rooms</option>
-            <option value="ac">AC Rooms</option>
-            <option value="non-ac">Non-AC Rooms</option>
-          </select>
-        </div>
-      </div>
-      <a onclick="quickSearch()" class="btn btn-gold" style="cursor:pointer;">
-        <i class="fas fa-search"></i> Check Availability
-      </a>
-    </div>
-  </div>
-</section>
-
-<section class="rooms-section" style="padding-top:0;">
-  <div class="container">
-    <div class="section-title">
-      <h2>Featured Rooms</h2>
-      <div class="gold-divider"></div>
-      <p>Handpicked accommodations for the ultimate luxury experience.</p>
-    </div>
-
-    <div class="rooms-grid" id="featuredGrid"></div>
-
-    <div style="text-align:center;margin-top:48px;">
-      <a href="rooms.html" class="btn btn-outline-gold"><i class="fas fa-th-large"></i> View All Rooms</a>
-    </div>
-  </div>
-</section>
-
-<section class="amenities">
-  <div class="container">
-    <div class="section-title">
-      <h2>World-Class Amenities</h2>
-      <div class="gold-divider"></div>
-    </div>
-    <div class="amenities-grid">
-      <div class="amenity-item"><i class="fas fa-spa"></i><h4>Luxury Spa</h4><p>Signature treatments</p></div>
-      <div class="amenity-item"><i class="fas fa-utensils"></i><h4>Fine Dining</h4><p>Michelin-starred</p></div>
-      <div class="amenity-item"><i class="fas fa-swimming-pool"></i><h4>Infinity Pool</h4><p>Rooftop views</p></div>
-      <div class="amenity-item"><i class="fas fa-dumbbell"></i><h4>Fitness Center</h4><p>24/7 access</p></div>
-    </div>
-  </div>
-</section>
-
-<section class="testimonial-section">
-  <div class="container">
-    <div class="section-title">
-      <h2>Guest Experiences</h2>
-      <div class="gold-divider"></div>
-    </div>
-    <div class="testimonial-grid">
-      <div class="testimonial-card">
-        <i class="fas fa-quote-left"></i>
-        <p>Absolutely flawless. The golden details in the room, the service, everything was perfect.</p>
-        <div class="testimonial-author">
-          <div class="avatar">SJ</div>
-          <div><h5>Sarah Johnson</h5><span>New York, USA</span></div>
-        </div>
-      </div>
-      <div class="testimonial-card">
-        <i class="fas fa-quote-left"></i>
-        <p>The Executive Suite exceeded all expectations. The ocean view at sunrise was breathtaking.</p>
-        <div class="testimonial-author">
-          <div class="avatar">MC</div>
-          <div><h5>Michael Chen</h5><span>Singapore</span></div>
-        </div>
-      </div>
-      <div class="testimonial-card">
-        <i class="fas fa-quote-left"></i>
-        <p>From the moment we arrived, we were treated like family. Pure luxury.</p>
-        <div class="testimonial-author">
-          <div class="avatar">ER</div>
-          <div><h5>Elena Rossi</h5><span>Milan, Italy</span></div>
-        </div>
+    <!-- ============ SLIDE 2 ============ -->
+    <div class="cine-slide" data-slide="1">
+      <div class="cine-label">Important Notice</div>
+      <div class="cine-crown"><i class="fas fa-circle-info"></i></div>
+      <h1 class="cine-title">
+        <span class="w" style="animation-delay: 0.3s;">This</span>
+        <span class="w" style="animation-delay: 0.5s;">is</span>
+        <span class="w highlight" style="animation-delay: 0.7s;">NOT</span>
+        <span class="w" style="animation-delay: 0.9s;">a</span>
+        <span class="w" style="animation-delay: 1.1s;">Real</span>
+        <span class="w" style="animation-delay: 1.3s;">Website</span>
+      </h1>
+      <div class="cine-divider"></div>
+      <p class="cine-sub">
+        This is a <span class="key">pure demonstration project</span> created by the
+        <span class="strong-gold">Modulos Agency Team</span>.
+        <br><br>
+        <span class="key">No real bookings, payments, or reservations</span>
+        will ever be processed here.
+      </p>
+      <div class="warn-badge">
+        <i class="fas fa-info-circle"></i>
+        Built <span style="color:#F5E6C0;">solely</span> to showcase our design & development craft
       </div>
     </div>
-  </div>
-</section>
 
-<footer class="site-footer">
-  <div class="container">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <div class="logo"><i class="fas fa-crown"></i> Grand <span>Aurelia</span></div>
-        <p>Experience the finest in hospitality with golden elegance.</p>
-        <div class="footer-social">
-          <a onclick="showToast('Facebook — Demo')"><i class="fab fa-facebook-f"></i></a>
-          <a onclick="showToast('Instagram — Demo')"><i class="fab fa-instagram"></i></a>
-          <a onclick="showToast('X — Demo')"><i class="fab fa-x-twitter"></i></a>
-          <a onclick="showToast('LinkedIn — Demo')"><i class="fab fa-linkedin-in"></i></a>
+    <!-- ============ SLIDE 3 — TEAM ============ -->
+    <div class="cine-slide" data-slide="2">
+      <div class="cine-label">Crafted by</div>
+      <div class="cine-crown"><i class="fas fa-users"></i></div>
+      <h1 class="cine-title">
+        <span class="w" style="animation-delay: 0.3s;">The</span>
+        <span class="w highlight" style="animation-delay: 0.5s;">Modulos</span>
+        <span class="w" style="animation-delay: 0.7s;">Team</span>
+      </h1>
+      <div class="cine-divider"></div>
+
+      <div class="team-credits">
+        <div class="team-card">
+          <div class="team-avatar">U</div>
+          <div class="team-name">Uvesh</div>
+          <div class="team-role">CEO · Modulos</div>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar">A</div>
+          <div class="team-name">Arjun</div>
+          <div class="team-role">Operator</div>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar">H</div>
+          <div class="team-name">Harsh</div>
+          <div class="team-role">Helper</div>
         </div>
       </div>
-      <div class="footer-col">
-        <h4>Explore</h4>
-        <ul>
-          <li><a href="rooms.html">Rooms</a></li>
-          <li><a href="suites.html">Suites</a></li>
-          <li><a href="dining.html">Dining</a></li>
-          <li><a href="spa.html">Spa</a></li>
-          <li><a href="offers.html">Offers</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Support</h4>
-        <ul>
-          <li><a href="contact.html">Contact</a></li>
-          <li><a onclick="showToast('FAQs — Demo')">FAQs</a></li>
-          <li><a onclick="showToast('Privacy Policy — Demo')">Privacy Policy</a></li>
-          <li><a onclick="showToast('Terms — Demo')">Terms</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Contact</h4>
-        <p><i class="fas fa-map-pin"></i> 888 Golden Avenue, Beverly Hills</p>
-        <p><i class="fas fa-phone-alt"></i> +1 800 555 0199</p>
-        <p><i class="fas fa-envelope"></i> reservations@grandaurelia.com</p>
+
+      <p class="cine-sub" style="margin-top: 30px;">
+        Every pixel, every animation, every interaction —
+        <br>
+        built with <span class="key">love and precision</span> by these three.
+      </p>
+    </div>
+
+    <!-- ============ SLIDE 4 — FINALE ============ -->
+    <div class="cine-slide" data-slide="3">
+      <div class="cine-label">You're In</div>
+      <div class="cine-crown"><i class="fas fa-door-open"></i></div>
+      <h1 class="cine-title finale-title">
+        <span class="w" style="animation-delay: 0.3s;">Step</span>
+        <span class="w" style="animation-delay: 0.5s;">Inside</span>
+        <span class="w highlight" style="animation-delay: 0.7s;">Luxury</span>
+      </h1>
+      <div class="cine-divider"></div>
+      <p class="cine-sub finale-sub">
+        Everything ahead is a <span class="key">demo experience</span> —<br>
+        rooms, suites, dining, spa, offers & a fully working booking flow.
+      </p>
+      <div class="warn-badge" style="margin-top: 30px;">
+        <i class="fas fa-heart" style="color:#C6A15B;"></i>
+        Thank you for experiencing our work
       </div>
     </div>
-    <div class="footer-bottom">
-      <span>© 2025 Grand Aurelia. All rights reserved.</span>
-      <span class="agency-credit">Designed by Modulos Team</span>
-    </div>
-  </div>
-</footer>
 
-<!-- BOOKING MODAL -->
-<div class="modal-overlay" id="bookingModal">
-  <div class="modal-box">
-    <button class="modal-close" onclick="closeBookingModal()"><i class="fas fa-times"></i></button>
-    <div id="modalFormView">
-      <h3 id="modalTitle">Book Your Stay</h3>
-      <p class="modal-sub">Fill in your details and we'll confirm your reservation.</p>
-      <form class="modal-form" onsubmit="submitBooking(event)">
-        <div class="form-group">
-          <label>Full Name *</label>
-          <input type="text" id="modalName" placeholder="Your full name" required>
+    <!-- Controls with popup button -->
+    <div class="cine-controls">
+      <div class="cine-dots">
+        <span class="cine-dot active" data-dot="0"></span>
+        <span class="cine-dot" data-dot="1"></span>
+        <span class="cine-dot" data-dot="2"></span>
+        <span class="cine-dot" data-dot="3"></span>
+      </div>
+
+      <div class="cine-next-wrap">
+        <div class="cine-hint" id="cineHint">
+          <i class="fas fa-hand-pointer"></i> Click to continue
         </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Email *</label>
-            <input type="email" id="modalEmail" placeholder="you@example.com" required>
-          </div>
-          <div class="form-group">
-            <label>Phone *</label>
-            <input type="tel" id="modalPhone" placeholder="+91 98765 43210" required>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Select Room</label>
-          <select id="modalRoom"></select>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Check-in</label>
-            <input type="date" id="modalCheckin" required>
-          </div>
-          <div class="form-group">
-            <label>Check-out</label>
-            <input type="date" id="modalCheckout" required>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Guests</label>
-          <select id="modalGuests">
-            <option value="1">1 Guest</option>
-            <option value="2" selected>2 Guests</option>
-            <option value="3">3 Guests</option>
-            <option value="4">4 Guests</option>
-            <option value="5">5 Guests</option>
-          </select>
-        </div>
-        <div class="price-summary">
-          <div id="priceSummary"></div>
-          <div class="total-price" id="totalPrice">$0</div>
-        </div>
-        <button type="submit" class="btn btn-gold btn-block">
-          <i class="fas fa-check-circle"></i> Confirm Reservation
+        <button class="cine-next" id="cineNext">
+          <span id="cineNextText">Next</span>
+          <i class="fas fa-arrow-right"></i>
         </button>
-      </form>
+      </div>
     </div>
-    <div id="modalSuccessView" class="modal-success" style="display:none;">
-      <i class="fas fa-check-circle"></i>
-      <h3>Reservation Confirmed!</h3>
-      <div class="booking-ref" id="bookingRef">GA00000000</div>
-      <p id="successMessage"></p>
-      <button class="btn btn-gold" onclick="closeBookingModal()">
-        <i class="fas fa-thumbs-up"></i> Done
-      </button>
-    </div>
+
   </div>
+
+  <div class="cine-progress"><span id="cineProgress"></span></div>
 </div>
 
-<div class="toast" id="toast">
-  <i class="fas fa-info-circle"></i>
-  <span id="toastMsg">Message</span>
-</div>
+<!-- ============================================================
+     MAIN WEBSITE
+     ============================================================ -->
+<div id="mainSite" style="opacity:0; transition: opacity 1.4s ease;">
+
+  <div class="demo-banner">
+    <i class="fas fa-flask"></i> <strong>Modulos Team Web Demo</strong> · All content is for demonstration only.
+  </div>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo"><i class="fas fa-crown"></i> Grand <span>Aurelia</span></a>
+      <nav class="nav-links" id="navLinks">
+        <a href="index.html" class="active">Home</a>
+        <a href="rooms.html">Rooms</a>
+        <a href="suites.html">Suites</a>
+        <a href="dining.html">Dining</a>
+        <a href="spa.html">Spa</a>
+        <a href="offers.html">Offers</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+      <div class="header-actions">
+        <a onclick="showToast('Calling +1 800 555 0199...')" class="btn btn-outline-gold" style="cursor:pointer;">
+          <i class="fas fa-phone-alt"></i> +1 800 555 0199
+        </a>
+        <a onclick="openBookingModal()" class="btn btn-gold" style="cursor:pointer;">
+          <i class="fas fa-calendar-check"></i> Book Now
+        </a>
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+      </div>
+    </div>
+  </header>
+
+  <section class="booking-bar-wrap" style="padding-top:80px;">
+    <div class="container hero-grid">
+      <div class="hero-content">
+        <h1><i class="fas fa-gem"></i> Experience <br> Timeless Luxury</h1>
+        <p>Where golden elegance meets modern comfort. Indulge in our curated collection of rooms & suites.</p>
+        <div class="hero-stats">
+          <div><span class="stat-number">150+</span><br><span class="stat-label">Luxury Rooms</span></div>
+          <div><span class="stat-number">4.9</span><br><span class="stat-label">Guest Rating</span></div>
+          <div><span class="stat-number">24/7</span><br><span class="stat-label">Concierge</span></div>
+        </div>
+      </div>
+      <div class="hero-image">
+        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1170&auto=format&fit=crop" alt="Luxury hotel">
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="booking-bar">
+        <div class="booking-fields">
+          <div class="booking-field">
+            <i class="fas fa-calendar-alt"></i>
+            <input type="date" id="quickCheckin">
+          </div>
+          <div class="booking-field">
+            <i class="fas fa-calendar-alt"></i>
+            <input type="date" id="quickCheckout">
+          </div>
+          <div class="booking-field">
+            <i class="fas fa-user-friends"></i>
+            <select id="quickGuests">
+              <option value="1">1 Guest</option>
+              <option value="2" selected>2 Guests</option>
+              <option value="3">3 Guests</option>
+              <option value="4">4 Guests</option>
+              <option value="5">5+ Guests</option>
+            </select>
+          </div>
+          <div class="booking-field">
+            <i class="fas fa-snowflake"></i>
+            <select id="quickType">
+              <option value="all">All Rooms</option>
+              <option value="ac">AC Rooms</option>
+              <option value="non-ac">Non-AC Rooms</option>
+            </select>
+          </div>
+        </div>
+        <a onclick="quickSearch()" class="btn btn-gold" style="cursor:pointer;">
+          <i class="fas fa-search"></i> Check Availability
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="rooms-section" style="padding-top:0;">
+    <div class="container">
+      <div class="section-title">
+        <h2>Featured Rooms</h2>
+        <div class="gold-divider"></div>
+        <p>Handpicked accommodations for the ultimate luxury experience.</p>
+      </div>
+
+      <div class="rooms-grid" id="featuredGrid"></div>
+
+      <div style="text-align:center;margin-top:48px;">
+        <a href="rooms.html" class="btn btn-outline-gold"><i class="fas fa-th-large"></i> View All Rooms</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="amenities">
+    <div class="container">
+      <div class="section-title">
+        <h2>World-Class Amenities</h2>
+        <div class="gold-divider"></div>
+      </div>
+      <div class="amenities-grid">
+        <div class="amenity-item"><i class="fas fa-spa"></i><h4>Luxury Spa</h4><p>Signature treatments</p></div>
+        <div class="amenity-item"><i class="fas fa-utensils"></i><h4>Fine Dining</h4><p>Michelin-starred</p></div>
+        <div class="amenity-item"><i class="fas fa-swimming-pool"></i><h4>Infinity Pool</h4><p>Rooftop views</p></div>
+        <div class="amenity-item"><i class="fas fa-dumbbell"></i><h4>Fitness Center</h4><p>24/7 access</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="testimonial-section">
+    <div class="container">
+      <div class="section-title">
+        <h2>Guest Experiences</h2>
+        <div class="gold-divider"></div>
+      </div>
+      <div class="testimonial-grid">
+        <div class="testimonial-card">
+          <i class="fas fa-quote-left"></i>
+          <p>Absolutely flawless. The golden details in the room, the service, everything was perfect.</p>
+          <div class="testimonial-author">
+            <div class="avatar">SJ</div>
+            <div><h5>Sarah Johnson</h5><span>New York, USA</span></div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <i class="fas fa-quote-left"></i>
+          <p>The Executive Suite exceeded all expectations. The ocean view at sunrise was breathtaking.</p>
+          <div class="testimonial-author">
+            <div class="avatar">MC</div>
+            <div><h5>Michael Chen</h5><span>Singapore</span></div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <i class="fas fa-quote-left"></i>
+          <p>From the moment we arrived, we were treated like family. Pure luxury.</p>
+          <div class="testimonial-author">
+            <div class="avatar">ER</div>
+            <div><h5>Elena Rossi</h5><span>Milan, Italy</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="logo"><i class="fas fa-crown"></i> Grand <span>Aurelia</span></div>
+          <p>Experience the finest in hospitality with golden elegance.</p>
+          <div class="footer-social">
+            <a onclick="showToast('Facebook — Demo')"><i class="fab fa-facebook-f"></i></a>
+            <a onclick="showToast('Instagram — Demo')"><i class="fab fa-instagram"></i></a>
+            <a onclick="showToast('X — Demo')"><i class="fab fa-x-twitter"></i></a>
+            <a onclick="showToast('LinkedIn — Demo')"><i class="fab fa-linkedin-in"></i></a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Explore</h4>
+          <ul>
+            <li><a href="rooms.html">Rooms</a></li>
+            <li><a href="suites.html">Suites</a></li>
+            <li><a href="dining.html">Dining</a></li>
+            <li><a href="spa.html">Spa</a></li>
+            <li><a href="offers.html">Offers</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Support</h4>
+          <ul>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a onclick="showToast('FAQs — Demo')">FAQs</a></li>
+            <li><a onclick="showToast('Privacy Policy — Demo')">Privacy Policy</a></li>
+            <li><a onclick="showToast('Terms — Demo')">Terms</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <p><i class="fas fa-map-pin"></i> 888 Golden Avenue, Beverly Hills</p>
+          <p><i class="fas fa-phone-alt"></i> +1 800 555 0199</p>
+          <p><i class="fas fa-envelope"></i> reservations@grandaurelia.com</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2025 Grand Aurelia. All rights reserved.</span>
+        <span class="agency-credit">Designed by Modulos Team</span>
+      </div>
+    </div>
+  </footer>
+
+  <div class="modal-overlay" id="bookingModal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeBookingModal()"><i class="fas fa-times"></i></button>
+      <div id="modalFormView">
+        <h3 id="modalTitle">Book Your Stay</h3>
+        <p class="modal-sub">Fill in your details and we'll confirm your reservation.</p>
+        <form class="modal-form" onsubmit="submitBooking(event)">
+          <div class="form-group">
+            <label>Full Name *</label>
+            <input type="text" id="modalName" placeholder="Your full name" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Email *</label>
+              <input type="email" id="modalEmail" placeholder="you@example.com" required>
+            </div>
+            <div class="form-group">
+              <label>Phone *</label>
+              <input type="tel" id="modalPhone" placeholder="+91 98765 43210" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Select Room</label>
+            <select id="modalRoom"></select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Check-in</label>
+              <input type="date" id="modalCheckin" required>
+            </div>
+            <div class="form-group">
+              <label>Check-out</label>
+              <input type="date" id="modalCheckout" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Guests</label>
+            <select id="modalGuests">
+              <option value="1">1 Guest</option>
+              <option value="2" selected>2 Guests</option>
+              <option value="3">3 Guests</option>
+              <option value="4">4 Guests</option>
+              <option value="5">5 Guests</option>
+            </select>
+          </div>
+          <div class="price-summary">
+            <div id="priceSummary"></div>
+            <div class="total-price" id="totalPrice">$0</div>
+          </div>
+          <button type="submit" class="btn btn-gold btn-block">
+            <i class="fas fa-check-circle"></i> Confirm Reservation
+          </button>
+        </form>
+      </div>
+      <div id="modalSuccessView" class="modal-success" style="display:none;">
+        <i class="fas fa-check-circle"></i>
+        <h3>Reservation Confirmed!</h3>
+        <div class="booking-ref" id="bookingRef">GA00000000</div>
+        <p id="successMessage"></p>
+        <button class="btn btn-gold" onclick="closeBookingModal()">
+          <i class="fas fa-thumbs-up"></i> Done
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">
+    <i class="fas fa-info-circle"></i>
+    <span id="toastMsg">Message</span>
+  </div>
+
+</div><!-- /#mainSite -->
 
 <script src="js/main.js"></script>
 <script>
+  /* ============================================================
+     CINEMATIC INTRO CONTROLLER — MANUAL NEXT ONLY
+     ============================================================ */
+  (function () {
+    const intro       = document.getElementById('cineIntro');
+    const mainSite    = document.getElementById('mainSite');
+    const skipBtn     = document.getElementById('cineSkip');
+    const nextBtn     = document.getElementById('cineNext');
+    const nextText    = document.getElementById('cineNextText');
+    const hint        = document.getElementById('cineHint');
+    const slides      = document.querySelectorAll('.cine-slide');
+    const dots        = document.querySelectorAll('.cine-dot');
+    const progressBar = document.getElementById('cineProgress');
+
+    const totalSlides = slides.length;
+    let currentSlide = 0;
+    let finished = false;
+
+    // Lock scroll during intro
+    document.body.style.overflow = 'hidden';
+
+    function updateProgress() {
+      const pct = ((currentSlide + 1) / totalSlides) * 100;
+      progressBar.style.width = pct + '%';
+    }
+
+    function goToSlide(index) {
+      slides.forEach((s, i) => s.classList.toggle('active', i === index));
+      dots.forEach((d, i) => d.classList.toggle('active', i === index));
+      currentSlide = index;
+      updateProgress();
+
+      // Update button text + hint on the last slide
+      if (index === totalSlides - 1) {
+        nextText.textContent = 'Enter Website';
+        if (hint) hint.innerHTML = '<i class="fas fa-rocket"></i> Click to enter';
+      } else {
+        nextText.textContent = 'Next';
+        if (hint) hint.innerHTML = '<i class="fas fa-hand-pointer"></i> Click to continue';
+      }
+    }
+
+    function finishIntro() {
+      if (finished) return;
+      finished = true;
+
+      intro.classList.add('hide');
+      mainSite.style.opacity = '1';
+      document.body.style.overflow = '';
+
+      setTimeout(() => {
+        if (intro.parentNode) intro.remove();
+      }, 1800);
+    }
+
+    function handleNext() {
+      if (currentSlide < totalSlides - 1) {
+        goToSlide(currentSlide + 1);
+      } else {
+        finishIntro();
+      }
+    }
+
+    // Next button — the ONLY way to advance (no auto)
+    if (nextBtn) nextBtn.addEventListener('click', handleNext);
+
+    // Dot click — jump to slide
+    dots.forEach((dot, i) => {
+      dot.addEventListener('click', () => {
+        if (i === totalSlides - 1 && currentSlide === totalSlides - 1) {
+          finishIntro();
+        } else {
+          goToSlide(i);
+        }
+      });
+    });
+
+    // Skip button — skip entire intro
+    if (skipBtn) skipBtn.addEventListener('click', finishIntro);
+
+    // ESC — skip entire intro
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') finishIntro();
+    });
+
+    // Init
+    goToSlide(0);
+
+    // Session memory — if already played this session, skip directly
+    if (sessionStorage.getItem('ga_intro_played') === '1') {
+      finishIntro();
+    } else {
+      sessionStorage.setItem('ga_intro_played', '1');
+    }
+  })();
+
+  /* ============================================================
+     HOME PAGE LOGIC
+     ============================================================ */
   function quickSearch() {
     const ci = document.getElementById('quickCheckin').value;
     const co = document.getElementById('quickCheckout').value;
@@ -326,20 +1146,27 @@
     const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
     const dayAfter = new Date(today); dayAfter.setDate(today.getDate() + 2);
     const fmt = (d) => d.toISOString().split('T')[0];
-    document.getElementById('quickCheckin').value = fmt(tomorrow);
-    document.getElementById('quickCheckin').min = fmt(today);
-    document.getElementById('quickCheckout').value = fmt(dayAfter);
-    document.getElementById('quickCheckout').min = fmt(tomorrow);
+
+    const quickCI = document.getElementById('quickCheckin');
+    const quickCO = document.getElementById('quickCheckout');
+    if (quickCI) {
+      quickCI.value = fmt(tomorrow);
+      quickCI.min = fmt(today);
+    }
+    if (quickCO) {
+      quickCO.value = fmt(dayAfter);
+      quickCO.min = fmt(tomorrow);
+    }
 
     const roomSelect = document.getElementById('modalRoom');
-    if (roomSelect) {
+    if (roomSelect && typeof ROOMS_DB !== 'undefined') {
       roomSelect.innerHTML = ROOMS_DB.map(r =>
         `<option value="${r.id}">${r.name} — $${r.price}/night (${r.type.toUpperCase()})</option>`
       ).join('');
     }
 
     const featuredGrid = document.getElementById('featuredGrid');
-    if (featuredGrid) {
+    if (featuredGrid && typeof ROOMS_DB !== 'undefined' && typeof renderRoomCard === 'function') {
       featuredGrid.innerHTML = ROOMS_DB.slice(0, 3).map(renderRoomCard).join('');
     }
   });
