@@ -10,385 +10,339 @@
 </head>
 <body>
 
-  <div class="demo-banner">
-    <i class="fas fa-flask"></i> <strong>Modulos Team Web Demo</strong> · All content is for demonstration only.
+<!-- ============ CINEMATIC INTRO ============ -->
+<div id="cinematicIntro">
+  <button class="intro-skip" id="introSkip"><i class="fas fa-forward"></i> Skip Intro</button>
+
+  <div class="intro-bg">
+    <div class="intro-grid"></div>
+    <div class="intro-beam"></div>
+    <div class="intro-orb orb-1"></div>
+    <div class="intro-orb orb-2"></div>
+    <div class="intro-orb orb-3"></div>
+    <div class="intro-orb orb-4"></div>
   </div>
 
-  <header class="site-header">
-    <div class="container header-inner">
-      <a href="index.html" class="logo"><i class="fas fa-crown"></i> Grand <span>Aurelia</span></a>
-      <nav class="nav-links" id="navLinks">
-        <a href="index.html" class="active">Home</a>
-        <a href="rooms.html">Rooms</a>
-        <a href="suites.html">Suites</a>
-        <a href="dining.html">Dining</a>
-        <a href="spa.html">Spa</a>
-        <a href="offers.html">Offers</a>
-        <a href="contact.html">Contact</a>
-      </nav>
-      <div class="header-actions">
-        <a onclick="showToast('Calling +1 800 555 0199...')" class="btn btn-outline-gold" style="cursor:pointer;">
-          <i class="fas fa-phone-alt"></i> +1 800 555 0199
-        </a>
-        <a onclick="openBookingModal()" class="btn btn-gold" style="cursor:pointer;">
-          <i class="fas fa-calendar-check"></i> Book Now
-        </a>
-        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+  <div class="intro-content">
+    <div class="intro-crown"><i class="fas fa-crown"></i></div>
+    <div class="intro-line"></div>
+
+    <h1 class="intro-title">
+      <span class="word" style="animation-delay: 1.5s;">A</span>
+      <span class="word" style="animation-delay: 1.75s;">Cinematic</span>
+      <span class="word" style="animation-delay: 2.0s;">Hotel</span>
+      <span class="word" style="animation-delay: 2.25s;">Experience</span>
+    </h1>
+
+    <p class="intro-sub">
+      This website is a demonstration project created by <strong style="color:#C6A15B;">Modulos Agency Team</strong>.<br>
+      It is not a real booking platform — it exists solely to showcase our design and development work.
+    </p>
+
+    <div class="intro-progress"><span></span></div>
+
+    <div class="intro-footer">Crafted by Modulos Agency · 2025</div>
+  </div>
+</div>
+
+<div class="demo-banner">
+  <i class="fas fa-flask"></i> <strong>Modulos Team Web Demo</strong> · All content is for demonstration only.
+</div>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo"><i class="fas fa-crown"></i> Grand <span>Aurelia</span></a>
+    <nav class="nav-links" id="navLinks">
+      <a href="index.html" class="active">Home</a>
+      <a href="rooms.html">Rooms</a>
+      <a href="suites.html">Suites</a>
+      <a href="dining.html">Dining</a>
+      <a href="spa.html">Spa</a>
+      <a href="offers.html">Offers</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+    <div class="header-actions">
+      <a onclick="showToast('Calling +1 800 555 0199...')" class="btn btn-outline-gold" style="cursor:pointer;">
+        <i class="fas fa-phone-alt"></i> +1 800 555 0199
+      </a>
+      <a onclick="openBookingModal()" class="btn btn-gold" style="cursor:pointer;">
+        <i class="fas fa-calendar-check"></i> Book Now
+      </a>
+      <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+    </div>
+  </div>
+</header>
+
+<section class="booking-bar-wrap" style="padding-top:80px;">
+  <div class="container hero-grid">
+    <div class="hero-content">
+      <h1><i class="fas fa-gem"></i> Experience <br> Timeless Luxury</h1>
+      <p>Where golden elegance meets modern comfort. Indulge in our curated collection of rooms & suites.</p>
+      <div class="hero-stats">
+        <div><span class="stat-number">150+</span><br><span class="stat-label">Luxury Rooms</span></div>
+        <div><span class="stat-number">4.9</span><br><span class="stat-label">Guest Rating</span></div>
+        <div><span class="stat-number">24/7</span><br><span class="stat-label">Concierge</span></div>
       </div>
     </div>
-  </header>
+    <div class="hero-image">
+      <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1170&auto=format&fit=crop" alt="Luxury hotel">
+    </div>
+  </div>
 
-  <section class="booking-bar-wrap" style="padding-top:80px;">
-    <div class="container hero-grid">
-      <div class="hero-content">
-        <h1><i class="fas fa-gem"></i> Experience <br> Timeless Luxury</h1>
-        <p>Where golden elegance meets modern comfort. Indulge in our curated collection of rooms & suites.</p>
-        <div class="hero-stats">
-          <div><span class="stat-number">150+</span><br><span class="stat-label">Luxury Rooms</span></div>
-          <div><span class="stat-number">4.9</span><br><span class="stat-label">Guest Rating</span></div>
-          <div><span class="stat-number">24/7</span><br><span class="stat-label">Concierge</span></div>
+  <div class="container">
+    <div class="booking-bar">
+      <div class="booking-fields">
+        <div class="booking-field">
+          <i class="fas fa-calendar-alt"></i>
+          <input type="date" id="quickCheckin">
+        </div>
+        <div class="booking-field">
+          <i class="fas fa-calendar-alt"></i>
+          <input type="date" id="quickCheckout">
+        </div>
+        <div class="booking-field">
+          <i class="fas fa-user-friends"></i>
+          <select id="quickGuests">
+            <option value="1">1 Guest</option>
+            <option value="2" selected>2 Guests</option>
+            <option value="3">3 Guests</option>
+            <option value="4">4 Guests</option>
+            <option value="5">5+ Guests</option>
+          </select>
+        </div>
+        <div class="booking-field">
+          <i class="fas fa-snowflake"></i>
+          <select id="quickType">
+            <option value="all">All Rooms</option>
+            <option value="ac">AC Rooms</option>
+            <option value="non-ac">Non-AC Rooms</option>
+          </select>
         </div>
       </div>
-      <div class="hero-image">
-        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1170&auto=format&fit=crop" alt="Luxury hotel">
-      </div>
+      <a onclick="quickSearch()" class="btn btn-gold" style="cursor:pointer;">
+        <i class="fas fa-search"></i> Check Availability
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="rooms-section" style="padding-top:0;">
+  <div class="container">
+    <div class="section-title">
+      <h2>Featured Rooms</h2>
+      <div class="gold-divider"></div>
+      <p>Handpicked accommodations for the ultimate luxury experience.</p>
     </div>
 
-    <div class="container">
-      <div class="booking-bar">
-        <div class="booking-fields">
-          <div class="booking-field">
-            <i class="fas fa-calendar-alt"></i>
-            <input type="date" id="quickCheckin">
-          </div>
-          <div class="booking-field">
-            <i class="fas fa-calendar-alt"></i>
-            <input type="date" id="quickCheckout">
-          </div>
-          <div class="booking-field">
-            <i class="fas fa-user-friends"></i>
-            <select id="quickGuests">
-              <option value="1">1 Guest</option>
-              <option value="2" selected>2 Guests</option>
-              <option value="3">3 Guests</option>
-              <option value="4">4 Guests</option>
-              <option value="5">5+ Guests</option>
-            </select>
-          </div>
-          <div class="booking-field">
-            <i class="fas fa-snowflake"></i>
-            <select id="quickType">
-              <option value="all">All Rooms</option>
-              <option value="ac">AC Rooms</option>
-              <option value="non-ac">Non-AC Rooms</option>
-            </select>
-          </div>
+    <div class="rooms-grid" id="featuredGrid"></div>
+
+    <div style="text-align:center;margin-top:48px;">
+      <a href="rooms.html" class="btn btn-outline-gold"><i class="fas fa-th-large"></i> View All Rooms</a>
+    </div>
+  </div>
+</section>
+
+<section class="amenities">
+  <div class="container">
+    <div class="section-title">
+      <h2>World-Class Amenities</h2>
+      <div class="gold-divider"></div>
+    </div>
+    <div class="amenities-grid">
+      <div class="amenity-item"><i class="fas fa-spa"></i><h4>Luxury Spa</h4><p>Signature treatments</p></div>
+      <div class="amenity-item"><i class="fas fa-utensils"></i><h4>Fine Dining</h4><p>Michelin-starred</p></div>
+      <div class="amenity-item"><i class="fas fa-swimming-pool"></i><h4>Infinity Pool</h4><p>Rooftop views</p></div>
+      <div class="amenity-item"><i class="fas fa-dumbbell"></i><h4>Fitness Center</h4><p>24/7 access</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="testimonial-section">
+  <div class="container">
+    <div class="section-title">
+      <h2>Guest Experiences</h2>
+      <div class="gold-divider"></div>
+    </div>
+    <div class="testimonial-grid">
+      <div class="testimonial-card">
+        <i class="fas fa-quote-left"></i>
+        <p>Absolutely flawless. The golden details in the room, the service, everything was perfect.</p>
+        <div class="testimonial-author">
+          <div class="avatar">SJ</div>
+          <div><h5>Sarah Johnson</h5><span>New York, USA</span></div>
         </div>
-        <a onclick="quickSearch()" class="btn btn-gold" style="cursor:pointer;">
-          <i class="fas fa-search"></i> Check Availability
-        </a>
       </div>
-    </div>
-  </section>
-
-  <section class="rooms-section" style="padding-top:0;">
-    <div class="container">
-      <div class="section-title">
-        <h2>Featured Rooms</h2>
-        <div class="gold-divider"></div>
-        <p>Handpicked accommodations for the ultimate luxury experience.</p>
-      </div>
-
-      <div class="rooms-grid">
-        <article class="room-card" data-type="ac" data-bed="king">
-          <div class="room-tags">
-            <span class="tag ac"><i class="fas fa-snowflake"></i> AC</span>
-            <span class="tag">King</span>
-          </div>
-          <div class="room-img">
-            <img src="https://images.unsplash.com/photo-1611892440504-42a792e24d32?q=80&w=1170&auto=format&fit=crop" alt="Deluxe King Room">
-            <div class="room-price-badge">$289 <small>/night</small></div>
-          </div>
-          <div class="room-info">
-            <h3>Deluxe King Room</h3>
-            <div class="room-features">
-              <span><i class="fas fa-vector-square"></i> 45 m²</span>
-              <span><i class="fas fa-bed"></i> King bed</span>
-              <span><i class="fas fa-snowflake"></i> AC</span>
-            </div>
-            <p class="room-desc">Elegant AC room with plush king bed and private balcony overlooking the skyline.</p>
-            <div class="room-actions">
-              <a onclick="openBookingModal('deluxe-king-ac')" class="btn btn-gold" style="cursor:pointer;">
-                <i class="fas fa-calendar-check"></i> Book Now
-              </a>
-              <span class="rating"><i class="fas fa-star"></i> 4.9 (128)</span>
-            </div>
-          </div>
-        </article>
-
-        <article class="room-card" data-type="ac" data-bed="king">
-          <div class="room-tags">
-            <span class="tag ac"><i class="fas fa-snowflake"></i> AC</span>
-            <span class="tag">King</span>
-          </div>
-          <div class="room-img">
-            <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=1170&auto=format&fit=crop" alt="Executive Suite">
-            <div class="room-price-badge">$459 <small>/night</small></div>
-          </div>
-          <div class="room-info">
-            <h3>Executive Suite</h3>
-            <div class="room-features">
-              <span><i class="fas fa-vector-square"></i> 78 m²</span>
-              <span><i class="fas fa-bed"></i> King + Sofa</span>
-              <span><i class="fas fa-snowflake"></i> AC</span>
-            </div>
-            <p class="room-desc">Spacious AC suite with separate living area and luxurious bathroom with gold fixtures.</p>
-            <div class="room-actions">
-              <a onclick="openBookingModal('executive-suite-ac')" class="btn btn-gold" style="cursor:pointer;">
-                <i class="fas fa-calendar-check"></i> Book Now
-              </a>
-              <span class="rating"><i class="fas fa-star"></i> 5.0 (94)</span>
-            </div>
-          </div>
-        </article>
-
-        <article class="room-card" data-type="non-ac" data-bed="king">
-          <div class="room-tags">
-            <span class="tag non-ac"><i class="fas fa-fan"></i> Non-AC</span>
-            <span class="tag">King</span>
-          </div>
-          <div class="room-img">
-            <img src="https://images.unsplash.com/photo-1578683010236-d716f9a3f461?q=80&w=1170&auto=format&fit=crop" alt="Junior Suite">
-            <div class="room-price-badge">$199 <small>/night</small></div>
-          </div>
-          <div class="room-info">
-            <h3>Junior Suite (Non-AC)</h3>
-            <div class="room-features">
-              <span><i class="fas fa-vector-square"></i> 62 m²</span>
-              <span><i class="fas fa-bed"></i> King bed</span>
-              <span><i class="fas fa-fan"></i> Non-AC</span>
-            </div>
-            <p class="room-desc">Refined non-AC suite with separate lounge and elegant gold-toned décor.</p>
-            <div class="room-actions">
-              <a onclick="openBookingModal('junior-suite-nonac')" class="btn btn-gold" style="cursor:pointer;">
-                <i class="fas fa-calendar-check"></i> Book Now
-              </a>
-              <span class="rating"><i class="fas fa-star"></i> 4.7 (112)</span>
-            </div>
-          </div>
-        </article>
-      </div>
-
-      <div style="text-align:center;margin-top:48px;">
-        <a href="rooms.html" class="btn btn-outline-gold"><i class="fas fa-th-large"></i> View All Rooms</a>
-      </div>
-    </div>
-  </section>
-
-  <section class="amenities">
-    <div class="container">
-      <div class="section-title">
-        <h2>World-Class Amenities</h2>
-        <div class="gold-divider"></div>
-      </div>
-      <div class="amenities-grid">
-        <div class="amenity-item"><i class="fas fa-spa"></i><h4>Luxury Spa</h4><p>Signature treatments</p></div>
-        <div class="amenity-item"><i class="fas fa-utensils"></i><h4>Fine Dining</h4><p>Michelin-starred</p></div>
-        <div class="amenity-item"><i class="fas fa-swimming-pool"></i><h4>Infinity Pool</h4><p>Rooftop views</p></div>
-        <div class="amenity-item"><i class="fas fa-dumbbell"></i><h4>Fitness Center</h4><p>24/7 access</p></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="testimonial-section">
-    <div class="container">
-      <div class="section-title">
-        <h2>Guest Experiences</h2>
-        <div class="gold-divider"></div>
-      </div>
-      <div class="testimonial-grid">
-        <div class="testimonial-card">
-          <i class="fas fa-quote-left"></i>
-          <p>Absolutely flawless. The golden details in the room, the service, everything was perfect.</p>
-          <div class="testimonial-author">
-            <div class="avatar">SJ</div>
-            <div><h5>Sarah Johnson</h5><span>New York, USA</span></div>
-          </div>
+      <div class="testimonial-card">
+        <i class="fas fa-quote-left"></i>
+        <p>The Executive Suite exceeded all expectations. The ocean view at sunrise was breathtaking.</p>
+        <div class="testimonial-author">
+          <div class="avatar">MC</div>
+          <div><h5>Michael Chen</h5><span>Singapore</span></div>
         </div>
-        <div class="testimonial-card">
-          <i class="fas fa-quote-left"></i>
-          <p>The Executive Suite exceeded all expectations. The ocean view at sunrise was breathtaking.</p>
-          <div class="testimonial-author">
-            <div class="avatar">MC</div>
-            <div><h5>Michael Chen</h5><span>Singapore</span></div>
-          </div>
-        </div>
-        <div class="testimonial-card">
-          <i class="fas fa-quote-left"></i>
-          <p>From the moment we arrived, we were treated like family. Pure luxury.</p>
-          <div class="testimonial-author">
-            <div class="avatar">ER</div>
-            <div><h5>Elena Rossi</h5><span>Milan, Italy</span></div>
-          </div>
+      </div>
+      <div class="testimonial-card">
+        <i class="fas fa-quote-left"></i>
+        <p>From the moment we arrived, we were treated like family. Pure luxury.</p>
+        <div class="testimonial-author">
+          <div class="avatar">ER</div>
+          <div><h5>Elena Rossi</h5><span>Milan, Italy</span></div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <footer class="site-footer">
-    <div class="container">
-      <div class="footer-grid">
-        <div class="footer-brand">
-          <div class="logo"><i class="fas fa-crown"></i> Grand <span>Aurelia</span></div>
-          <p>Experience the finest in hospitality with golden elegance.</p>
-          <div class="footer-social">
-            <a onclick="showToast('Facebook — Demo')"><i class="fab fa-facebook-f"></i></a>
-            <a onclick="showToast('Instagram — Demo')"><i class="fab fa-instagram"></i></a>
-            <a onclick="showToast('X — Demo')"><i class="fab fa-x-twitter"></i></a>
-            <a onclick="showToast('LinkedIn — Demo')"><i class="fab fa-linkedin-in"></i></a>
-          </div>
-        </div>
-        <div class="footer-col">
-          <h4>Explore</h4>
-          <ul>
-            <li><a href="rooms.html">Rooms</a></li>
-            <li><a href="suites.html">Suites</a></li>
-            <li><a href="dining.html">Dining</a></li>
-            <li><a href="spa.html">Spa</a></li>
-            <li><a href="offers.html">Offers</a></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <h4>Support</h4>
-          <ul>
-            <li><a href="contact.html">Contact</a></li>
-            <li><a onclick="showToast('FAQs — Demo')">FAQs</a></li>
-            <li><a onclick="showToast('Privacy Policy — Demo')">Privacy Policy</a></li>
-            <li><a onclick="showToast('Terms — Demo')">Terms</a></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <h4>Contact</h4>
-          <p><i class="fas fa-map-pin"></i> 888 Golden Avenue, Beverly Hills</p>
-          <p><i class="fas fa-phone-alt"></i> +1 800 555 0199</p>
-          <p><i class="fas fa-envelope"></i> reservations@grandaurelia.com</p>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo"><i class="fas fa-crown"></i> Grand <span>Aurelia</span></div>
+        <p>Experience the finest in hospitality with golden elegance.</p>
+        <div class="footer-social">
+          <a onclick="showToast('Facebook — Demo')"><i class="fab fa-facebook-f"></i></a>
+          <a onclick="showToast('Instagram — Demo')"><i class="fab fa-instagram"></i></a>
+          <a onclick="showToast('X — Demo')"><i class="fab fa-x-twitter"></i></a>
+          <a onclick="showToast('LinkedIn — Demo')"><i class="fab fa-linkedin-in"></i></a>
         </div>
       </div>
-      <div class="footer-bottom">
-        <span>© 2025 Grand Aurelia. All rights reserved.</span>
-        <span class="agency-credit">Designed by Modulos Team</span>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="rooms.html">Rooms</a></li>
+          <li><a href="suites.html">Suites</a></li>
+          <li><a href="dining.html">Dining</a></li>
+          <li><a href="spa.html">Spa</a></li>
+          <li><a href="offers.html">Offers</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a onclick="showToast('FAQs — Demo')">FAQs</a></li>
+          <li><a onclick="showToast('Privacy Policy — Demo')">Privacy Policy</a></li>
+          <li><a onclick="showToast('Terms — Demo')">Terms</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <p><i class="fas fa-map-pin"></i> 888 Golden Avenue, Beverly Hills</p>
+        <p><i class="fas fa-phone-alt"></i> +1 800 555 0199</p>
+        <p><i class="fas fa-envelope"></i> reservations@grandaurelia.com</p>
       </div>
     </div>
-  </footer>
+    <div class="footer-bottom">
+      <span>© 2025 Grand Aurelia. All rights reserved.</span>
+      <span class="agency-credit">Designed by Modulos Team</span>
+    </div>
+  </div>
+</footer>
 
-  <!-- BOOKING MODAL -->
-  <div class="modal-overlay" id="bookingModal">
-    <div class="modal-box">
-      <button class="modal-close" onclick="closeBookingModal()"><i class="fas fa-times"></i></button>
-
-      <div id="modalFormView">
-        <h3 id="modalTitle">Book Your Stay</h3>
-        <p class="modal-sub">Fill in your details and we'll confirm your reservation.</p>
-
-        <form class="modal-form" onsubmit="submitBooking(event)">
+<!-- BOOKING MODAL -->
+<div class="modal-overlay" id="bookingModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeBookingModal()"><i class="fas fa-times"></i></button>
+    <div id="modalFormView">
+      <h3 id="modalTitle">Book Your Stay</h3>
+      <p class="modal-sub">Fill in your details and we'll confirm your reservation.</p>
+      <form class="modal-form" onsubmit="submitBooking(event)">
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input type="text" id="modalName" placeholder="Your full name" required>
+        </div>
+        <div class="form-row">
           <div class="form-group">
-            <label>Full Name *</label>
-            <input type="text" id="modalName" placeholder="Your full name" required>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Email *</label>
-              <input type="email" id="modalEmail" placeholder="you@example.com" required>
-            </div>
-            <div class="form-group">
-              <label>Phone *</label>
-              <input type="tel" id="modalPhone" placeholder="+91 98765 43210" required>
-            </div>
+            <label>Email *</label>
+            <input type="email" id="modalEmail" placeholder="you@example.com" required>
           </div>
           <div class="form-group">
-            <label>Select Room</label>
-            <select id="modalRoom"></select>
+            <label>Phone *</label>
+            <input type="tel" id="modalPhone" placeholder="+91 98765 43210" required>
           </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Check-in</label>
-              <input type="date" id="modalCheckin" required>
-            </div>
-            <div class="form-group">
-              <label>Check-out</label>
-              <input type="date" id="modalCheckout" required>
-            </div>
+        </div>
+        <div class="form-group">
+          <label>Select Room</label>
+          <select id="modalRoom"></select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Check-in</label>
+            <input type="date" id="modalCheckin" required>
           </div>
           <div class="form-group">
-            <label>Guests</label>
-            <select id="modalGuests">
-              <option value="1">1 Guest</option>
-              <option value="2" selected>2 Guests</option>
-              <option value="3">3 Guests</option>
-              <option value="4">4 Guests</option>
-              <option value="5">5 Guests</option>
-            </select>
+            <label>Check-out</label>
+            <input type="date" id="modalCheckout" required>
           </div>
-
-          <div class="price-summary">
-            <div id="priceSummary"></div>
-            <div class="total-price" id="totalPrice">$0</div>
-          </div>
-
-          <button type="submit" class="btn btn-gold btn-block">
-            <i class="fas fa-check-circle"></i> Confirm Reservation
-          </button>
-        </form>
-      </div>
-
-      <div id="modalSuccessView" class="modal-success" style="display:none;">
-        <i class="fas fa-check-circle"></i>
-        <h3>Reservation Confirmed!</h3>
-        <div class="booking-ref" id="bookingRef">GA00000000</div>
-        <p id="successMessage"></p>
-        <button class="btn btn-gold" onclick="closeBookingModal()">
-          <i class="fas fa-thumbs-up"></i> Done
+        </div>
+        <div class="form-group">
+          <label>Guests</label>
+          <select id="modalGuests">
+            <option value="1">1 Guest</option>
+            <option value="2" selected>2 Guests</option>
+            <option value="3">3 Guests</option>
+            <option value="4">4 Guests</option>
+            <option value="5">5 Guests</option>
+          </select>
+        </div>
+        <div class="price-summary">
+          <div id="priceSummary"></div>
+          <div class="total-price" id="totalPrice">$0</div>
+        </div>
+        <button type="submit" class="btn btn-gold btn-block">
+          <i class="fas fa-check-circle"></i> Confirm Reservation
         </button>
-      </div>
+      </form>
+    </div>
+    <div id="modalSuccessView" class="modal-success" style="display:none;">
+      <i class="fas fa-check-circle"></i>
+      <h3>Reservation Confirmed!</h3>
+      <div class="booking-ref" id="bookingRef">GA00000000</div>
+      <p id="successMessage"></p>
+      <button class="btn btn-gold" onclick="closeBookingModal()">
+        <i class="fas fa-thumbs-up"></i> Done
+      </button>
     </div>
   </div>
+</div>
 
-  <div class="toast" id="toast">
-    <i class="fas fa-info-circle"></i>
-    <span id="toastMsg">Message</span>
-  </div>
+<div class="toast" id="toast">
+  <i class="fas fa-info-circle"></i>
+  <span id="toastMsg">Message</span>
+</div>
 
-  <script src="js/main.js"></script>
-  <script>
-    // Quick search handler
-    function quickSearch() {
-      const ci = document.getElementById('quickCheckin').value;
-      const co = document.getElementById('quickCheckout').value;
-      const type = document.getElementById('quickType').value;
-      if (!ci || !co) { showToast('Please select both dates'); return; }
-      if (new Date(co) <= new Date(ci)) { showToast('Check-out must be after check-in'); return; }
-      window.location.href = 'rooms.html?type=' + type + '&ci=' + ci + '&co=' + co;
+<script src="js/main.js"></script>
+<script>
+  function quickSearch() {
+    const ci = document.getElementById('quickCheckin').value;
+    const co = document.getElementById('quickCheckout').value;
+    const type = document.getElementById('quickType').value;
+    if (!ci || !co) { showToast('Please select both dates'); return; }
+    if (new Date(co) <= new Date(ci)) { showToast('Check-out must be after check-in'); return; }
+    window.location.href = 'rooms.html?type=' + type + '&ci=' + ci + '&co=' + co;
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const today = new Date();
+    const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
+    const dayAfter = new Date(today); dayAfter.setDate(today.getDate() + 2);
+    const fmt = (d) => d.toISOString().split('T')[0];
+    document.getElementById('quickCheckin').value = fmt(tomorrow);
+    document.getElementById('quickCheckin').min = fmt(today);
+    document.getElementById('quickCheckout').value = fmt(dayAfter);
+    document.getElementById('quickCheckout').min = fmt(tomorrow);
+
+    const roomSelect = document.getElementById('modalRoom');
+    if (roomSelect) {
+      roomSelect.innerHTML = ROOMS_DB.map(r =>
+        `<option value="${r.id}">${r.name} — $${r.price}/night (${r.type.toUpperCase()})</option>`
+      ).join('');
     }
 
-    // Init date defaults
-    document.addEventListener('DOMContentLoaded', () => {
-      const today = new Date();
-      const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
-      const dayAfter = new Date(today); dayAfter.setDate(today.getDate() + 2);
-      const fmt = (d) => d.toISOString().split('T')[0];
-      document.getElementById('quickCheckin').value = fmt(tomorrow);
-      document.getElementById('quickCheckin').min = fmt(today);
-      document.getElementById('quickCheckout').value = fmt(dayAfter);
-      document.getElementById('quickCheckout').min = fmt(tomorrow);
-
-      // Populate modal room dropdown
-      const roomSelect = document.getElementById('modalRoom');
-      if (roomSelect) {
-        roomSelect.innerHTML = ROOMS_DB.map(r =>
-          `<option value="${r.id}">${r.name} — $${r.price}/night (${r.type.toUpperCase()})</option>`
-        ).join('');
-      }
-    });
-  </script>
+    const featuredGrid = document.getElementById('featuredGrid');
+    if (featuredGrid) {
+      featuredGrid.innerHTML = ROOMS_DB.slice(0, 3).map(renderRoomCard).join('');
+    }
+  });
+</script>
 </body>
 </html>
