@@ -3,14 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rooms · Grand Aurelia</title>
+  <title>Room Details · Grand Aurelia</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<!-- ============ CINEMATIC INTRO ============ -->
 <div id="cinematicIntro">
   <button class="intro-skip" id="introSkip"><i class="fas fa-forward"></i> Skip Intro</button>
   <div class="intro-bg">
@@ -48,7 +47,7 @@
     <a href="index.html" class="logo"><i class="fas fa-crown"></i> Grand <span>Aurelia</span></a>
     <nav class="nav-links" id="navLinks">
       <a href="index.html">Home</a>
-      <a href="rooms.html" class="active">Rooms</a>
+      <a href="rooms.html">Rooms</a>
       <a href="suites.html">Suites</a>
       <a href="dining.html">Dining</a>
       <a href="spa.html">Spa</a>
@@ -67,26 +66,129 @@
   </div>
 </header>
 
-<section class="page-hero">
+<section class="room-detail-hero">
   <div class="container">
-    <h1>Our Rooms</h1>
-    <p>Choose from AC & Non-AC rooms with King, Twin, Double, or Single beds.</p>
+    <div class="breadcrumb">
+      <a href="index.html">Home</a>
+      <i class="fas fa-chevron-right"></i>
+      <a href="rooms.html">Rooms</a>
+      <i class="fas fa-chevron-right"></i>
+      <span id="roomBreadcrumbName">Room</span>
+    </div>
+    <h1 id="roomTitle">Room Name</h1>
+    <div class="hero-meta" id="roomMeta"></div>
   </div>
 </section>
 
-<section class="rooms-section">
+<section class="room-detail-section">
   <div class="container">
-    <div class="filter-bar">
-      <button class="filter-btn active" onclick="filterRooms('all', this)">All Rooms</button>
-      <button class="filter-btn" onclick="filterRooms('ac', this)"><i class="fas fa-snowflake"></i> AC</button>
-      <button class="filter-btn" onclick="filterRooms('non-ac', this)"><i class="fas fa-fan"></i> Non-AC</button>
-      <button class="filter-btn" onclick="filterRooms('king', this)">King Bed</button>
-      <button class="filter-btn" onclick="filterRooms('twin', this)">Twin Beds</button>
-      <button class="filter-btn" onclick="filterRooms('double', this)">Double Bed</button>
-      <button class="filter-btn" onclick="filterRooms('single', this)">Single Bed</button>
-    </div>
+    <div class="room-detail-layout">
 
-    <div class="rooms-grid" id="roomsGrid"></div>
+      <!-- LEFT COLUMN -->
+      <div>
+        <!-- Gallery -->
+        <div class="gallery-main">
+          <img id="galleryMain" src="" alt="Room image">
+        </div>
+        <div class="gallery-thumbs" id="galleryThumbs"></div>
+
+        <!-- Description -->
+        <div class="detail-block">
+          <h3><i class="fas fa-info-circle"></i> About This Room</h3>
+          <p id="roomDescription"></p>
+        </div>
+
+        <!-- Specs -->
+        <div class="detail-block">
+          <h3><i class="fas fa-list-ul"></i> Room Specifications</h3>
+          <div class="specs-grid" id="specsGrid"></div>
+        </div>
+
+        <!-- Amenities -->
+        <div class="detail-block">
+          <h3><i class="fas fa-concierge-bell"></i> Amenities & Services</h3>
+          <div class="amenities-list" id="amenitiesList"></div>
+        </div>
+
+        <!-- Reviews -->
+        <div class="detail-block">
+          <h3><i class="fas fa-star"></i> Guest Reviews</h3>
+          <div id="reviewsList"></div>
+        </div>
+
+        <!-- Policies -->
+        <div class="detail-block">
+          <h3><i class="fas fa-file-contract"></i> Hotel Policies</h3>
+          <div class="policy-grid" id="policyGrid"></div>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN — STICKY BOOKING CARD -->
+      <aside class="booking-card">
+        <div class="price-tag">
+          <span class="amount" id="bookPrice">$0</span>
+          <span class="per">/ night</span>
+        </div>
+
+        <h4>Book this Room</h4>
+
+        <form id="roomBookingForm">
+          <div class="form-group">
+            <label>Room</label>
+            <select id="bookRoom" disabled></select>
+          </div>
+
+          <div class="form-group">
+            <label>Full Name *</label>
+            <input type="text" id="bookName" placeholder="Your name" required>
+          </div>
+
+          <div class="form-group">
+            <label>Email *</label>
+            <input type="email" id="bookEmail" placeholder="you@example.com" required>
+          </div>
+
+          <div class="form-group">
+            <label>Phone *</label>
+            <input type="tel" id="bookPhone" placeholder="+91 98765 43210" required>
+          </div>
+
+          <div class="form-group">
+            <label>Check-in</label>
+            <input type="date" id="bookCheckin" required>
+          </div>
+
+          <div class="form-group">
+            <label>Check-out</label>
+            <input type="date" id="bookCheckout" required>
+          </div>
+
+          <div class="form-group">
+            <label>Guests</label>
+            <select id="bookGuests">
+              <option value="1">1 Guest</option>
+              <option value="2" selected>2 Guests</option>
+              <option value="3">3 Guests</option>
+              <option value="4">4 Guests</option>
+              <option value="5">5 Guests</option>
+            </select>
+          </div>
+
+          <div class="price-breakdown" id="priceBreakdown"></div>
+
+          <button type="submit" class="btn btn-gold btn-block">
+            <i class="fas fa-check-circle"></i> Confirm Reservation
+          </button>
+
+          <div class="trust-badges">
+            <div class="trust-badge"><i class="fas fa-shield-alt"></i> Secure</div>
+            <div class="trust-badge"><i class="fas fa-undo"></i> Free Cancel</div>
+            <div class="trust-badge"><i class="fas fa-headset"></i> 24/7</div>
+          </div>
+        </form>
+      </aside>
+
+    </div>
   </div>
 </section>
 
@@ -140,13 +242,13 @@
   <div class="modal-box">
     <button class="modal-close" onclick="closeBookingModal()"><i class="fas fa-times"></i></button>
     <div id="modalFormView">
-      <h3 id="modalTitle">Book Your Stay</h3>
+      <h3>Book Your Stay</h3>
       <p class="modal-sub">Fill in your details and we'll confirm your reservation.</p>
       <form class="modal-form" onsubmit="submitBooking(event)">
-        <div class="form-group"><label>Full Name *</label><input type="text" id="modalName" placeholder="Your full name" required></div>
+        <div class="form-group"><label>Full Name *</label><input type="text" id="modalName" required></div>
         <div class="form-row">
-          <div class="form-group"><label>Email *</label><input type="email" id="modalEmail" placeholder="you@example.com" required></div>
-          <div class="form-group"><label>Phone *</label><input type="tel" id="modalPhone" placeholder="+91 98765 43210" required></div>
+          <div class="form-group"><label>Email *</label><input type="email" id="modalEmail" required></div>
+          <div class="form-group"><label>Phone *</label><input type="tel" id="modalPhone" required></div>
         </div>
         <div class="form-group"><label>Select Room</label><select id="modalRoom"></select></div>
         <div class="form-row">
@@ -155,21 +257,13 @@
         </div>
         <div class="form-group">
           <label>Guests</label>
-          <select id="modalGuests">
-            <option value="1">1 Guest</option>
-            <option value="2" selected>2 Guests</option>
-            <option value="3">3 Guests</option>
-            <option value="4">4 Guests</option>
-            <option value="5">5 Guests</option>
-          </select>
+          <select id="modalGuests"><option>1 Guest</option><option selected>2 Guests</option><option>3 Guests</option><option>4 Guests</option></select>
         </div>
         <div class="price-summary">
           <div id="priceSummary"></div>
           <div class="total-price" id="totalPrice">$0</div>
         </div>
-        <button type="submit" class="btn btn-gold btn-block">
-          <i class="fas fa-check-circle"></i> Confirm Reservation
-        </button>
+        <button type="submit" class="btn btn-gold btn-block"><i class="fas fa-check-circle"></i> Confirm Reservation</button>
       </form>
     </div>
     <div id="modalSuccessView" class="modal-success" style="display:none;">
@@ -177,41 +271,269 @@
       <h3>Reservation Confirmed!</h3>
       <div class="booking-ref" id="bookingRef">GA00000000</div>
       <p id="successMessage"></p>
-      <button class="btn btn-gold" onclick="closeBookingModal()">
-        <i class="fas fa-thumbs-up"></i> Done
-      </button>
+      <button class="btn btn-gold" onclick="closeBookingModal()"><i class="fas fa-thumbs-up"></i> Done</button>
     </div>
   </div>
 </div>
 
-<div class="toast" id="toast">
-  <i class="fas fa-info-circle"></i>
-  <span id="toastMsg">Message</span>
-</div>
+<div class="toast" id="toast"><i class="fas fa-info-circle"></i><span id="toastMsg">Message</span></div>
 
 <script src="js/main.js"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const roomSelect = document.getElementById('modalRoom');
-    roomSelect.innerHTML = ROOMS_DB.map(r =>
-      `<option value="${r.id}">${r.name} — $${r.price}/night (${r.type.toUpperCase()})</option>`
-    ).join('');
+document.addEventListener('DOMContentLoaded', function () {
+  const params = new URLSearchParams(window.location.search);
+  const roomId = params.get('id');
+  const room = ROOMS_DB.find(r => r.id === roomId);
 
-    const grid = document.getElementById('roomsGrid');
-    grid.innerHTML = ROOMS_DB.map(renderRoomCard).join('');
+  if (!room) {
+    document.querySelector('.room-detail-section').innerHTML = `
+      <div class="container" style="text-align:center;padding:80px 0;">
+        <i class="fas fa-bed" style="font-size:4rem;color:var(--gold);margin-bottom:24px;"></i>
+        <h2 style="font-family:var(--font-serif);font-size:2rem;margin-bottom:12px;">Room Not Found</h2>
+        <p style="color:var(--text-muted);margin-bottom:24px;">The room you are looking for doesn't exist.</p>
+        <a href="rooms.html" class="btn btn-gold"><i class="fas fa-arrow-left"></i> Back to Rooms</a>
+      </div>
+    `;
+    return;
+  }
 
-    const params = new URLSearchParams(window.location.search);
-    const filterType = params.get('type');
-    if (filterType && filterType !== 'all') {
-      const btn = [...document.querySelectorAll('.filter-btn')].find(b => b.textContent.trim().toLowerCase().includes(filterType));
-      if (btn) filterRooms(filterType, btn);
-    }
+  document.title = room.name + ' · Grand Aurelia';
+  document.getElementById('roomBreadcrumbName').textContent = room.name;
+  document.getElementById('roomTitle').textContent = room.name;
+  document.getElementById('roomMeta').innerHTML = `
+    <span><i class="fas fa-star" style="color:var(--gold);"></i> <strong style="color:var(--gold-dark);">${room.rating}</strong> (${room.reviews} reviews)</span>
+    <span><i class="fas fa-vector-square" style="color:var(--gold);"></i> ${room.features[0].text}</span>
+    <span><i class="fas ${room.type === 'ac' ? 'fa-snowflake' : 'fa-fan'}" style="color:var(--gold);"></i> ${room.type.toUpperCase()}</span>
+    <span><i class="fas fa-bed" style="color:var(--gold);"></i> ${room.bedType.charAt(0).toUpperCase() + room.bedType.slice(1)} bed</span>
+  `;
 
-    const ci = params.get('ci');
-    const co = params.get('co');
-    if (ci) document.getElementById('modalCheckin').value = ci;
-    if (co) document.getElementById('modalCheckout').value = co;
+  const galleryImages = [
+    room.img,
+    "https://images.unsplash.com/photo-1590490360182-c33d57733427?q=80&w=1170&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?q=80&w=1170&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1618773928121-c32242e63f39?q=80&w=1170&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1595576508898-0ad5c879a061?q=80&w=1170&auto=format&fit=crop"
+  ];
+
+  document.getElementById('galleryMain').src = galleryImages[0];
+
+  document.getElementById('galleryThumbs').innerHTML = galleryImages.map((img, i) =>
+    `<img src="${img}" class="${i === 0 ? 'active' : ''}" onclick="changeMainImage('${img}', this)">`
+  ).join('');
+
+  document.getElementById('roomDescription').textContent = room.desc + ' Every detail has been carefully considered to provide the ultimate comfort — from premium linens and plush pillows to a state-of-the-art entertainment system. Enjoy 24-hour room service and complimentary high-speed WiFi throughout your stay.';
+
+  document.getElementById('specsGrid').innerHTML = `
+    <div class="spec-cell">
+      <i class="fas fa-vector-square"></i>
+      <div class="spec-info"><span class="spec-label">Room Size</span><span class="spec-value">${room.features[0].text}</span></div>
+    </div>
+    <div class="spec-cell">
+      <i class="fas fa-bed"></i>
+      <div class="spec-info"><span class="spec-label">Bed Type</span><span class="spec-value">${room.features[1].text}</span></div>
+    </div>
+    <div class="spec-cell">
+      <i class="fas ${room.type === 'ac' ? 'fa-snowflake' : 'fa-fan'}"></i>
+      <div class="spec-info"><span class="spec-label">Climate</span><span class="spec-value">${room.type === 'ac' ? 'Air Conditioned' : 'Non-AC (Ceiling Fan)'}</span></div>
+    </div>
+    <div class="spec-cell">
+      <i class="fas fa-user-friends"></i>
+      <div class="spec-info"><span class="spec-label">Max Occupancy</span><span class="spec-value">${room.bedType === 'single' ? '1 Guest' : room.bedType === 'double' ? '2-3 Guests' : '2-4 Guests'}</span></div>
+    </div>
+    <div class="spec-cell">
+      <i class="fas fa-door-open"></i>
+      <div class="spec-info"><span class="spec-label">Room Type</span><span class="spec-value">${room.category.charAt(0).toUpperCase() + room.category.slice(1)}</span></div>
+    </div>
+    <div class="spec-cell">
+      <i class="fas fa-binoculars"></i>
+      <div class="spec-info"><span class="spec-label">View</span><span class="spec-value">${room.features[3] ? room.features[3].text : 'City View'}</span></div>
+    </div>
+  `;
+
+  const amenitiesList = [
+    { icon: 'fa-wifi', text: 'Free High-Speed WiFi' },
+    { icon: 'fa-tv', text: '55" Smart TV with Netflix' },
+    { icon: 'fa-coffee', text: 'Complimentary Tea & Coffee' },
+    { icon: 'fa-bath', text: 'Rain Shower & Bathtub' },
+    { icon: 'fa-concierge-bell', text: '24/7 Room Service' },
+    { icon: 'fa-vault', text: 'In-room Electronic Safe' },
+    { icon: 'fa-wind', text: 'Premium Air Purifier' },
+    { icon: 'fa-broom', text: 'Daily Housekeeping' },
+    { icon: 'fa-tshirt', text: 'Laundry & Dry Cleaning' },
+    { icon: 'fa-utensils', text: 'In-room Dining Menu' }
+  ];
+  document.getElementById('amenitiesList').innerHTML = amenitiesList.map(a =>
+    `<div class="amenity-cell"><i class="fas ${a.icon}"></i> ${a.text}</div>`
+  ).join('');
+
+  const reviews = [
+    { name: 'Rahul Sharma', initials: 'RS', stars: 5, date: '2 days ago', text: 'Excellent room! The AC was perfect, bed was super comfortable. Highly recommend.' },
+    { name: 'Priya Patel', initials: 'PP', stars: 5, date: '1 week ago', text: 'Beautiful interiors with golden accents. The staff was extremely courteous.' },
+    { name: 'Ahmed Khan', initials: 'AK', stars: 4, date: '2 weeks ago', text: 'Great value for money. Clean and spacious. WiFi was fast.' }
+  ];
+  document.getElementById('reviewsList').innerHTML = reviews.map(r => `
+    <div class="review-item">
+      <div class="review-avatar">${r.initials}</div>
+      <div class="review-body">
+        <div class="review-head">
+          <h5>${r.name}</h5>
+          <span class="review-stars">${'<i class="fas fa-star"></i>'.repeat(r.stars)}</span>
+        </div>
+        <p>${r.text}</p>
+        <div class="review-date">${r.date}</div>
+      </div>
+    </div>
+  `).join('');
+
+  const policies = [
+    { icon: 'fa-clock', text: '<strong>Check-in:</strong> 2:00 PM onwards' },
+    { icon: 'fa-clock', text: '<strong>Check-out:</strong> Before 11:00 AM' },
+    { icon: 'fa-ban', text: '<strong>Cancellation:</strong> Free cancellation up to 24 hours before check-in' },
+    { icon: 'fa-id-card', text: '<strong>ID:</strong> Government-issued photo ID required at check-in' },
+    { icon: 'fa-smoking-ban', text: '<strong>Smoking:</strong> Strictly non-smoking rooms' },
+    { icon: 'fa-paw', text: '<strong>Pets:</strong> Not allowed (except service animals)' }
+  ];
+  document.getElementById('policyGrid').innerHTML = policies.map(p =>
+    `<div class="policy-cell"><i class="fas ${p.icon}"></i> <span>${p.text}</span></div>`
+  ).join('');
+
+  document.getElementById('bookPrice').textContent = '$' + room.price.toLocaleString();
+  document.getElementById('bookRoom').innerHTML = `<option>${room.name} — $${room.price}/night</option>`;
+
+  const today = new Date();
+  const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
+  const dayAfter = new Date(today); dayAfter.setDate(today.getDate() + 2);
+  const fmt = (d) => d.toISOString().split('T')[0];
+
+  document.getElementById('bookCheckin').value = fmt(tomorrow);
+  document.getElementById('bookCheckin').min = fmt(today);
+  document.getElementById('bookCheckout').value = fmt(dayAfter);
+  document.getElementById('bookCheckout').min = fmt(tomorrow);
+
+  const savedUser = JSON.parse(localStorage.getItem('ga_user') || '{}');
+  if (savedUser.name) document.getElementById('bookName').value = savedUser.name;
+  if (savedUser.email) document.getElementById('bookEmail').value = savedUser.email;
+  if (savedUser.phone) document.getElementById('bookPhone').value = savedUser.phone;
+
+  ['bookCheckin', 'bookCheckout', 'bookGuests'].forEach(id => {
+    document.getElementById(id).addEventListener('change', updateBookingCard);
   });
+
+  updateBookingCard();
+
+  document.getElementById('roomBookingForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    handleRoomBooking(room);
+  });
+
+  // Init modal room dropdown
+  const modalRoom = document.getElementById('modalRoom');
+  modalRoom.innerHTML = ROOMS_DB.map(r =>
+    `<option value="${r.id}" ${r.id === room.id ? 'selected' : ''}>${r.name} — $${r.price}/night</option>`
+  ).join('');
+});
+
+function changeMainImage(src, el) {
+  document.getElementById('galleryMain').src = src;
+  document.querySelectorAll('.gallery-thumbs img').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function updateBookingCard() {
+  const params = new URLSearchParams(window.location.search);
+  const room = ROOMS_DB.find(r => r.id === params.get('id'));
+  if (!room) return;
+
+  const ci = document.getElementById('bookCheckin').value;
+  const co = document.getElementById('bookCheckout').value;
+  const guests = parseInt(document.getElementById('bookGuests').value) || 1;
+
+  if (!ci || !co) return;
+
+  const d1 = new Date(ci);
+  const d2 = new Date(co);
+  let nights = Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24));
+  if (nights < 1 || isNaN(nights)) nights = 1;
+
+  let extraGuestFee = 0;
+  if (guests > 2) extraGuestFee = (guests - 2) * 30 * nights;
+
+  const subtotal = (room.price * nights) + extraGuestFee;
+  const taxes = Math.round(subtotal * 0.12);
+  const total = subtotal + taxes;
+
+  document.getElementById('priceBreakdown').innerHTML = `
+    <div class="breakdown-row">
+      <span>$${room.price} × ${nights} night${nights > 1 ? 's' : ''}</span>
+      <span>$${(room.price * nights).toLocaleString()}</span>
+    </div>
+    ${extraGuestFee > 0 ? `
+      <div class="breakdown-row">
+        <span>Extra guest fee</span>
+        <span>$${extraGuestFee.toLocaleString()}</span>
+      </div>
+    ` : ''}
+    <div class="breakdown-row">
+      <span>Taxes & fees (12%)</span>
+      <span>$${taxes.toLocaleString()}</span>
+    </div>
+    <div class="breakdown-row total">
+      <span>Total</span>
+      <span>$${total.toLocaleString()}</span>
+    </div>
+  `;
+}
+
+function handleRoomBooking(room) {
+  const name = document.getElementById('bookName').value.trim();
+  const email = document.getElementById('bookEmail').value.trim();
+  const phone = document.getElementById('bookPhone').value.trim();
+  const checkin = document.getElementById('bookCheckin').value;
+  const checkout = document.getElementById('bookCheckout').value;
+  const guests = document.getElementById('bookGuests').value;
+
+  if (!name || !email || !phone) {
+    showToast('Please fill all required fields');
+    return;
+  }
+
+  const d1 = new Date(checkin);
+  const d2 = new Date(checkout);
+  let nights = Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24));
+  if (nights < 1 || isNaN(nights)) { showToast('Invalid dates'); return; }
+
+  const ref = 'GA' + Date.now().toString().slice(-8).toUpperCase();
+
+  const booking = {
+    ref, name, email, phone,
+    roomId: room.id,
+    roomName: room.name,
+    price: room.price,
+    checkin, checkout, nights, guests,
+    total: room.price * nights,
+    createdAt: new Date().toISOString()
+  };
+
+  const bookings = JSON.parse(localStorage.getItem('ga_bookings') || '[]');
+  bookings.push(booking);
+  localStorage.setItem('ga_bookings', JSON.stringify(bookings));
+  localStorage.setItem('ga_user', JSON.stringify({ name, email, phone }));
+
+  // Show success in modal
+  const modal = document.getElementById('bookingModal');
+  document.getElementById('modalFormView').style.display = 'none';
+  document.getElementById('modalSuccessView').style.display = 'block';
+  document.getElementById('bookingRef').textContent = ref;
+  document.getElementById('successMessage').innerHTML = `
+    <strong>${name}</strong>, your booking is confirmed!<br>
+    ${room.name} · ${nights} night${nights > 1 ? 's' : ''}<br>
+    ${checkin} → ${checkout}<br>
+    Confirmation sent to <strong>${email}</strong>
+  `;
+  modal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+  showToast('Booking confirmed! Ref: ' + ref);
+}
 </script>
 </body>
 </html>
