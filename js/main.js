@@ -155,4 +155,276 @@ const ROOMS_DB = [
     type: "non-ac",
     bedType: "single",
     price: 79,
-    img: "https://images.
+    img: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1170&auto=format&fit=crop",
+    features: [
+      { icon: "fa-vector-square", text: "18 m²" },
+      { icon: "fa-bed", text: "Single bed" },
+      { icon: "fa-fan", text: "Non-AC" },
+      { icon: "fa-wifi", text: "Free WiFi" }
+    ],
+    desc: "Compact non-AC single room ideal for solo business travellers on a budget.",
+    rating: "4.3",
+    reviews: 421,
+    category: "room"
+  }
+];
+
+/* ============ TOAST ============ */
+let toastTimer;
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  const toastMsg = document.getElementById('toastMsg');
+  if (!toast) return;
+  toastMsg.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+}
+
+/* ============ BOOKING MODAL ============ */
+let currentRoom = null;
+
+function openBookingModal(roomIdOrTitle) {
+  const modal = document.getElementById('bookingModal');
+  if (!modal) return;
+
+  // Reset views
+  document.getElementById('modalFormView').style.display = 'block';
+  document.getElementById('modalSuccessView').style.display = 'none';
+  document.getElementById('modalTitle').textContent = 'Book Your Stay';
+
+  // Find room
+  let room = null;
+  if (roomIdOrTitle) {
+    room = ROOMS_DB.find(r => r.id === roomIdOrTitle || r.name === roomIdOrTitle);
+  }
+  if (!room) room = ROOMS_DB[0];
+  currentRoom = room;
+
+  // Set default dates
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const dayAfter = new Date(today);
+  dayAfter.setDate(dayAfter.getDate() + 2);
+
+  const fmt = (d) => d.toISOString().split('T')[0];
+
+  document.getElementById('modalCheckin').value = fmt(tomorrow);
+  document.getElementById('modalCheckout').value = fmt(dayAfter);
+  document.getElementById('modalCheckin').min = fmt(today);
+  document.getElementById('modalCheckout').min = fmt(tomorrow);
+
+  document.getElementById('modalRoom').value = room.id;
+
+  // Prefill user data if exists
+  const savedUser = JSON.parse(localStorage.getItem('ga_user') || '{}');
+  if (savedUser.name) document.getElementById('modalName').value = savedUser.name;
+  if (savedUser.email) document.getElementById('modalEmail').value = savedUser.email;
+  if (savedUser.phone) document.getElementById('modalPhone').value = savedUser.phone;
+
+  updatePriceSummary();
+
+  modal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeBookingModal() {
+  const modal = document.getElementById('bookingModal');
+  if (!modal) return;
+  modal.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+/* ============ PRICE CALCULATION ============ */
+function updatePriceSummary() {
+  const roomSelect = document.getElementById('modalRoom');
+  const checkin = document.getElementById('modalCheckin').value;
+  const checkout = document.getElementById('modalCheckout').value;
+  const guests = document.getElementById('modalGuests').value;
+
+  if (!roomSelect || !checkin || !checkout) return;
+
+  const room = ROOMS_DB.find(r => r.id === roomSelect.value);
+  if (!room) return;
+
+  const d1 = new Date(checkin);
+  const d2 = new Date(checkout);
+  let nights = Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24));
+  if (nights < 1 || isNaN(nights)) nights = 1;
+
+  // Guest-based pricing (extra guest charge)
+  let guestCount = parseInt(guests);
+  if (isNaN(guestCount)) guestCount = 1;
+  let extraGuestFee = 0;
+  if (guestCount > 2) extraGuestFee = (guestCount - 2) * 30; // $30 per extra guest per night
+
+  // Taxes 12%
+  const subtotal = (room.price * nights) + (extraGuestFee * nights);
+  const taxes = Math.round(subtotal * 0.12);
+  const total = subtotal + taxes;
+
+  const summary = document.getElementById('priceSummary');
+  if (summary) {
+    summary.innerHTML = `
+      <div>
+        <div style="font-size:0.85rem;color:var(--text-muted);">${room.name} × ${nights} night${nights > 1 ? 's' : ''}</div>
+        <div style="font-size:0.85rem;color:var(--text-muted);margin-top:4px;">Taxes & fees (12%)</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:0.95rem;">$${subtotal.toLocaleString()}</div>
+        <div style="font-size:0.85rem;color:var(--text-muted);margin-top:4px;">$${taxes.toLocaleString()}</div>
+      </div>
+    `;
+  }
+
+  const totalEl = document.getElementById('totalPrice');
+  if (totalEl) totalEl.textContent = '$' + total.toLocaleString();
+}
+
+/* ============ SUBMIT BOOKING ============ */
+function submitBooking(e) {
+  e.preventDefault();
+
+  const name = document.getElementById('modalName').value.trim();
+  const email = document.getElementById('modalEmail').value.trim();
+  const phone = document.getElementById('modalPhone').value.trim();
+  const roomId = document.getElementById('modalRoom').value;
+  const checkin = document.getElementById('modalCheckin').value;
+  const checkout = document.getElementById('modalCheckout').value;
+  const guests = document.getElementById('modalGuests').value;
+
+  if (!name || !email || !phone) {
+    showToast('Please fill all required fields');
+    return;
+  }
+
+  const room = ROOMS_DB.find(r => r.id === roomId);
+  if (!room) { showToast('Room not found'); return; }
+
+  // Calculate nights
+  const d1 = new Date(checkin);
+  const d2 = new Date(checkout);
+  let nights = Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24));
+  if (nights < 1 || isNaN(nights)) { showToast('Invalid dates'); return; }
+
+  // Generate booking reference
+  const ref = 'GA' + Date.now().toString().slice(-8).toUpperCase();
+
+  // Save booking
+  const booking = {
+    ref, name, email, phone,
+    roomId: room.id,
+    roomName: room.name,
+    price: room.price,
+    checkin, checkout, nights, guests,
+    total: room.price * nights,
+    createdAt: new Date().toISOString()
+  };
+
+  const bookings = JSON.parse(localStorage.getItem('ga_bookings') || '[]');
+  bookings.push(booking);
+  localStorage.setItem('ga_bookings', JSON.stringify(bookings));
+
+  // Save user info
+  localStorage.setItem('ga_user', JSON.stringify({ name, email, phone }));
+
+  // Show success
+  document.getElementById('modalFormView').style.display = 'none';
+  const successView = document.getElementById('modalSuccessView');
+  successView.style.display = 'block';
+
+  document.getElementById('bookingRef').textContent = ref;
+  document.getElementById('successMessage').innerHTML = `
+    <strong>${name}</strong>, your booking is confirmed!<br>
+    ${room.name} · ${nights} night${nights > 1 ? 's' : ''}<br>
+    ${checkin} → ${checkout}<br>
+    Confirmation sent to <strong>${email}</strong>
+  `;
+
+  showToast('Booking confirmed! Ref: ' + ref);
+}
+
+/* ============ CONTACT FORM ============ */
+function submitContact(e) {
+  e.preventDefault();
+  showToast('Message sent! We will respond within 24 hours.');
+  e.target.reset();
+}
+
+/* ============ RENDER ROOM CARD ============ */
+function renderRoomCard(room) {
+  const featuresHtml = room.features.map(f =>
+    `<span><i class="fas ${f.icon}"></i> ${f.text}</span>`
+  ).join('');
+
+  const typeTag = room.type === 'ac'
+    ? '<span class="tag ac"><i class="fas fa-snowflake"></i> AC</span>'
+    : '<span class="tag non-ac"><i class="fas fa-fan"></i> Non-AC</span>';
+
+  return `
+    <article class="room-card" data-type="${room.type}" data-bed="${room.bedType}">
+      <div class="room-tags">
+        ${typeTag}
+        <span class="tag">${room.bedType.charAt(0).toUpperCase() + room.bedType.slice(1)}</span>
+      </div>
+      <div class="room-img">
+        <img src="${room.img}" alt="${room.name}">
+        <div class="room-price-badge">$${room.price.toLocaleString()} <small>/night</small></div>
+      </div>
+      <div class="room-info">
+        <h3>${room.name}</h3>
+        <div class="room-features">${featuresHtml}</div>
+        <p class="room-desc">${room.desc}</p>
+        <div class="room-actions">
+          <a onclick="openBookingModal('${room.id}')" class="btn btn-gold" style="cursor:pointer;">
+            <i class="fas fa-calendar-check"></i> Book Now
+          </a>
+          <span class="rating"><i class="fas fa-star"></i> ${room.rating} (${room.reviews})</span>
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+/* ============ FILTER ROOMS ============ */
+function filterRooms(filterType, btnEl) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  if (btnEl) btnEl.classList.add('active');
+
+  document.querySelectorAll('.room-card').forEach(card => {
+    let show = false;
+    if (filterType === 'all') show = true;
+    else if (filterType === 'ac' || filterType === 'non-ac') show = card.dataset.type === filterType;
+    else if (filterType === 'king' || filterType === 'twin' || filterType === 'double' || filterType === 'single')
+      show = card.dataset.bed === filterType;
+
+    card.style.display = show ? 'flex' : 'none';
+  });
+}
+
+/* ============ INIT ============ */
+document.addEventListener('DOMContentLoaded', function () {
+  // Menu toggle
+  const menuToggle = document.getElementById('menuToggle');
+  const navLinks = document.getElementById('navLinks');
+  if (menuToggle && navLinks) {
+    menuToggle.addEventListener('click', () => navLinks.classList.toggle('show'));
+  }
+
+  // Modal close on overlay
+  const modal = document.getElementById('bookingModal');
+  if (modal) {
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeBookingModal(); });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeBookingModal();
+  });
+
+  // Attach price updater listeners
+  ['modalRoom', 'modalCheckin', 'modalCheckout', 'modalGuests'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('change', updatePriceSummary);
+  });
+});
