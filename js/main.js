@@ -1,7 +1,38 @@
 /* ============================================================
-   GRAND AURELIA — Common JavaScript
-   Handles: menu, modal, toast, booking system (with localStorage)
+   CINEMATIC INTRO
    ============================================================ */
+(function initCinematicIntro() {
+  const intro = document.getElementById('cinematicIntro');
+  if (!intro) return;
+
+  document.body.style.overflow = 'hidden';
+
+  const hideIntro = () => {
+    intro.classList.add('hide');
+    document.body.style.overflow = '';
+    setTimeout(() => { if (intro.parentNode) intro.remove(); }, 1400);
+  };
+
+  const skipBtn = document.getElementById('introSkip');
+  if (skipBtn) skipBtn.addEventListener('click', hideIntro);
+
+  const timer = setTimeout(hideIntro, 6500);
+
+  document.addEventListener('keydown', function escHandler(e) {
+    if (e.key === 'Escape') {
+      clearTimeout(timer);
+      hideIntro();
+      document.removeEventListener('keydown', escHandler);
+    }
+  });
+
+  if (sessionStorage.getItem('ga_intro_shown') === '1') {
+    clearTimeout(timer);
+    setTimeout(hideIntro, 500);
+  } else {
+    sessionStorage.setItem('ga_intro_shown', '1');
+  }
+})();
 
 /* ============ ROOMS DATABASE ============ */
 const ROOMS_DB = [
@@ -188,12 +219,10 @@ function openBookingModal(roomIdOrTitle) {
   const modal = document.getElementById('bookingModal');
   if (!modal) return;
 
-  // Reset views
   document.getElementById('modalFormView').style.display = 'block';
   document.getElementById('modalSuccessView').style.display = 'none';
   document.getElementById('modalTitle').textContent = 'Book Your Stay';
 
-  // Find room
   let room = null;
   if (roomIdOrTitle) {
     room = ROOMS_DB.find(r => r.id === roomIdOrTitle || r.name === roomIdOrTitle);
@@ -201,7 +230,6 @@ function openBookingModal(roomIdOrTitle) {
   if (!room) room = ROOMS_DB[0];
   currentRoom = room;
 
-  // Set default dates
   const today = new Date();
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
@@ -217,7 +245,6 @@ function openBookingModal(roomIdOrTitle) {
 
   document.getElementById('modalRoom').value = room.id;
 
-  // Prefill user data if exists
   const savedUser = JSON.parse(localStorage.getItem('ga_user') || '{}');
   if (savedUser.name) document.getElementById('modalName').value = savedUser.name;
   if (savedUser.email) document.getElementById('modalEmail').value = savedUser.email;
@@ -253,13 +280,11 @@ function updatePriceSummary() {
   let nights = Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24));
   if (nights < 1 || isNaN(nights)) nights = 1;
 
-  // Guest-based pricing (extra guest charge)
   let guestCount = parseInt(guests);
   if (isNaN(guestCount)) guestCount = 1;
   let extraGuestFee = 0;
-  if (guestCount > 2) extraGuestFee = (guestCount - 2) * 30; // $30 per extra guest per night
+  if (guestCount > 2) extraGuestFee = (guestCount - 2) * 30;
 
-  // Taxes 12%
   const subtotal = (room.price * nights) + (extraGuestFee * nights);
   const taxes = Math.round(subtotal * 0.12);
   const total = subtotal + taxes;
@@ -302,16 +327,13 @@ function submitBooking(e) {
   const room = ROOMS_DB.find(r => r.id === roomId);
   if (!room) { showToast('Room not found'); return; }
 
-  // Calculate nights
   const d1 = new Date(checkin);
   const d2 = new Date(checkout);
   let nights = Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24));
   if (nights < 1 || isNaN(nights)) { showToast('Invalid dates'); return; }
 
-  // Generate booking reference
   const ref = 'GA' + Date.now().toString().slice(-8).toUpperCase();
 
-  // Save booking
   const booking = {
     ref, name, email, phone,
     roomId: room.id,
@@ -325,11 +347,8 @@ function submitBooking(e) {
   const bookings = JSON.parse(localStorage.getItem('ga_bookings') || '[]');
   bookings.push(booking);
   localStorage.setItem('ga_bookings', JSON.stringify(bookings));
-
-  // Save user info
   localStorage.setItem('ga_user', JSON.stringify({ name, email, phone }));
 
-  // Show success
   document.getElementById('modalFormView').style.display = 'none';
   const successView = document.getElementById('modalSuccessView');
   successView.style.display = 'block';
@@ -363,7 +382,7 @@ function renderRoomCard(room) {
     : '<span class="tag non-ac"><i class="fas fa-fan"></i> Non-AC</span>';
 
   return `
-    <article class="room-card" data-type="${room.type}" data-bed="${room.bedType}">
+    <article class="room-card" data-type="${room.type}" data-bed="${room.bedType}" onclick="if(event.target.tagName !== 'A' && !event.target.closest('a')) window.location.href='room-details.html?id=${room.id}'">
       <div class="room-tags">
         ${typeTag}
         <span class="tag">${room.bedType.charAt(0).toUpperCase() + room.bedType.slice(1)}</span>
@@ -377,7 +396,7 @@ function renderRoomCard(room) {
         <div class="room-features">${featuresHtml}</div>
         <p class="room-desc">${room.desc}</p>
         <div class="room-actions">
-          <a onclick="openBookingModal('${room.id}')" class="btn btn-gold" style="cursor:pointer;">
+          <a onclick="event.stopPropagation(); openBookingModal('${room.id}')" class="btn btn-gold" style="cursor:pointer;">
             <i class="fas fa-calendar-check"></i> Book Now
           </a>
           <span class="rating"><i class="fas fa-star"></i> ${room.rating} (${room.reviews})</span>
@@ -405,14 +424,12 @@ function filterRooms(filterType, btnEl) {
 
 /* ============ INIT ============ */
 document.addEventListener('DOMContentLoaded', function () {
-  // Menu toggle
   const menuToggle = document.getElementById('menuToggle');
   const navLinks = document.getElementById('navLinks');
   if (menuToggle && navLinks) {
     menuToggle.addEventListener('click', () => navLinks.classList.toggle('show'));
   }
 
-  // Modal close on overlay
   const modal = document.getElementById('bookingModal');
   if (modal) {
     modal.addEventListener('click', (e) => { if (e.target === modal) closeBookingModal(); });
@@ -422,7 +439,6 @@ document.addEventListener('DOMContentLoaded', function () {
     if (e.key === 'Escape') closeBookingModal();
   });
 
-  // Attach price updater listeners
   ['modalRoom', 'modalCheckin', 'modalCheckout', 'modalGuests'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('change', updatePriceSummary);
