@@ -58,4 +58,155 @@
         <button class="filter-btn" onclick="filterRooms('single', this)">Single Bed</button>
       </div>
 
-      <div class="
+      <div class="rooms-grid" id="roomsGrid"></div>
+
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="logo"><i class="fas fa-crown"></i> Grand <span>Aurelia</span></div>
+          <p>Experience the finest in hospitality with golden elegance.</p>
+          <div class="footer-social">
+            <a onclick="showToast('Facebook — Demo')"><i class="fab fa-facebook-f"></i></a>
+            <a onclick="showToast('Instagram — Demo')"><i class="fab fa-instagram"></i></a>
+            <a onclick="showToast('X — Demo')"><i class="fab fa-x-twitter"></i></a>
+            <a onclick="showToast('LinkedIn — Demo')"><i class="fab fa-linkedin-in"></i></a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Explore</h4>
+          <ul>
+            <li><a href="rooms.html">Rooms</a></li>
+            <li><a href="suites.html">Suites</a></li>
+            <li><a href="dining.html">Dining</a></li>
+            <li><a href="spa.html">Spa</a></li>
+            <li><a href="offers.html">Offers</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Support</h4>
+          <ul>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a onclick="showToast('FAQs — Demo')">FAQs</a></li>
+            <li><a onclick="showToast('Privacy Policy — Demo')">Privacy Policy</a></li>
+            <li><a onclick="showToast('Terms — Demo')">Terms</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <p><i class="fas fa-map-pin"></i> 888 Golden Avenue, Beverly Hills</p>
+          <p><i class="fas fa-phone-alt"></i> +1 800 555 0199</p>
+          <p><i class="fas fa-envelope"></i> reservations@grandaurelia.com</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2025 Grand Aurelia. All rights reserved.</span>
+        <span class="agency-credit">Designed by Modulos Team</span>
+      </div>
+    </div>
+  </footer>
+
+  <div class="modal-overlay" id="bookingModal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeBookingModal()"><i class="fas fa-times"></i></button>
+      <div id="modalFormView">
+        <h3 id="modalTitle">Book Your Stay</h3>
+        <p class="modal-sub">Fill in your details and we'll confirm your reservation.</p>
+        <form class="modal-form" onsubmit="submitBooking(event)">
+          <div class="form-group">
+            <label>Full Name *</label>
+            <input type="text" id="modalName" placeholder="Your full name" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Email *</label>
+              <input type="email" id="modalEmail" placeholder="you@example.com" required>
+            </div>
+            <div class="form-group">
+              <label>Phone *</label>
+              <input type="tel" id="modalPhone" placeholder="+91 98765 43210" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Select Room</label>
+            <select id="modalRoom"></select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Check-in</label>
+              <input type="date" id="modalCheckin" required>
+            </div>
+            <div class="form-group">
+              <label>Check-out</label>
+              <input type="date" id="modalCheckout" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Guests</label>
+            <select id="modalGuests">
+              <option value="1">1 Guest</option>
+              <option value="2" selected>2 Guests</option>
+              <option value="3">3 Guests</option>
+              <option value="4">4 Guests</option>
+              <option value="5">5 Guests</option>
+            </select>
+          </div>
+          <div class="price-summary">
+            <div id="priceSummary"></div>
+            <div class="total-price" id="totalPrice">$0</div>
+          </div>
+          <button type="submit" class="btn btn-gold btn-block">
+            <i class="fas fa-check-circle"></i> Confirm Reservation
+          </button>
+        </form>
+      </div>
+      <div id="modalSuccessView" class="modal-success" style="display:none;">
+        <i class="fas fa-check-circle"></i>
+        <h3>Reservation Confirmed!</h3>
+        <div class="booking-ref" id="bookingRef">GA00000000</div>
+        <p id="successMessage"></p>
+        <button class="btn btn-gold" onclick="closeBookingModal()">
+          <i class="fas fa-thumbs-up"></i> Done
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">
+    <i class="fas fa-info-circle"></i>
+    <span id="toastMsg">Message</span>
+  </div>
+
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Populate modal dropdown
+      const roomSelect = document.getElementById('modalRoom');
+      roomSelect.innerHTML = ROOMS_DB.map(r =>
+        `<option value="${r.id}">${r.name} — $${r.price}/night (${r.type.toUpperCase()})</option>`
+      ).join('');
+
+      // Render all room cards
+      const grid = document.getElementById('roomsGrid');
+      grid.innerHTML = ROOMS_DB.map(renderRoomCard).join('');
+
+      // Handle URL filter (?type=ac)
+      const params = new URLSearchParams(window.location.search);
+      const filterType = params.get('type');
+      if (filterType && filterType !== 'all') {
+        const btn = [...document.querySelectorAll('.filter-btn')].find(b => b.textContent.trim().toLowerCase().includes(filterType));
+        if (btn) filterRooms(filterType, btn);
+      }
+
+      // Prefill dates from URL
+      const ci = params.get('ci');
+      const co = params.get('co');
+      if (ci) document.getElementById('modalCheckin').value = ci;
+      if (co) document.getElementById('modalCheckout').value = co;
+    });
+  </script>
+</body>
+</html>
