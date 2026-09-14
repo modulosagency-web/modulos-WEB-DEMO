@@ -1,38 +1,8 @@
 /* ============================================================
-   CINEMATIC INTRO
+   GRAND AURELIA — Main JavaScript (Enhanced)
+   Features: Intro, Rooms, Booking, Coupon, Wishlist, Confetti,
+             Toasts, Scroll Progress, Back to Top, Lightbox
    ============================================================ */
-(function initCinematicIntro() {
-  const intro = document.getElementById('cinematicIntro');
-  if (!intro) return;
-
-  document.body.style.overflow = 'hidden';
-
-  const hideIntro = () => {
-    intro.classList.add('hide');
-    document.body.style.overflow = '';
-    setTimeout(() => { if (intro.parentNode) intro.remove(); }, 1400);
-  };
-
-  const skipBtn = document.getElementById('introSkip');
-  if (skipBtn) skipBtn.addEventListener('click', hideIntro);
-
-  const timer = setTimeout(hideIntro, 6500);
-
-  document.addEventListener('keydown', function escHandler(e) {
-    if (e.key === 'Escape') {
-      clearTimeout(timer);
-      hideIntro();
-      document.removeEventListener('keydown', escHandler);
-    }
-  });
-
-  if (sessionStorage.getItem('ga_intro_shown') === '1') {
-    clearTimeout(timer);
-    setTimeout(hideIntro, 500);
-  } else {
-    sessionStorage.setItem('ga_intro_shown', '1');
-  }
-})();
 
 /* ============ ROOMS DATABASE ============ */
 const ROOMS_DB = [
@@ -42,6 +12,7 @@ const ROOMS_DB = [
     type: "ac",
     bedType: "king",
     price: 289,
+    discount: 15,
     img: "https://images.unsplash.com/photo-1611892440504-42a792e24d32?q=80&w=1170&auto=format&fit=crop",
     features: [
       { icon: "fa-vector-square", text: "45 m²" },
@@ -78,6 +49,7 @@ const ROOMS_DB = [
     type: "ac",
     bedType: "king",
     price: 799,
+    discount: 20,
     img: "https://images.unsplash.com/photo-1591088398332-8a7791972843?q=80&w=1170&auto=format&fit=crop",
     features: [
       { icon: "fa-vector-square", text: "120 m²" },
@@ -132,6 +104,7 @@ const ROOMS_DB = [
     type: "non-ac",
     bedType: "double",
     price: 129,
+    discount: 10,
     img: "https://images.unsplash.com/photo-1560185007-5f0bb1866cab?q=80&w=1170&auto=format&fit=crop",
     features: [
       { icon: "fa-vector-square", text: "28 m²" },
@@ -200,16 +173,285 @@ const ROOMS_DB = [
   }
 ];
 
-/* ============ TOAST ============ */
+/* ============ COUPONS ============ */
+const COUPONS = {
+  "GRAND10": { type: "percent", value: 10, label: "10% OFF" },
+  "FESTIVE20": { type: "percent", value: 20, label: "20% OFF" },
+  "WELCOME50": { type: "flat", value: 50, label: "$50 OFF" },
+  "SUITE15": { type: "percent", value: 15, label: "15% OFF Suites" }
+};
+
+let activeCoupon = null;
+
+/* ============ WISHLIST ============ */
+function getWishlist() {
+  return JSON.parse(localStorage.getItem('ga_wishlist') || '[]');
+}
+
+function saveWishlist(list) {
+  localStorage.setItem('ga_wishlist', JSON.stringify(list));
+  updateWishlistCount();
+}
+
+function isInWishlist(roomId) {
+  return getWishlist().includes(roomId);
+}
+
+function toggleWishlist(roomId, event) {
+  if (event) event.stopPropagation();
+  let list = getWishlist();
+  const idx = list.indexOf(roomId);
+  if (idx > -1) {
+    list.splice(idx, 1);
+    showToast('info', 'Removed', 'Room removed from wishlist');
+  } else {
+    list.push(roomId);
+    showToast('success', 'Added!', 'Room saved to your wishlist');
+  }
+  saveWishlist(list);
+  document.querySelectorAll('.wishlist-btn[data-room="' + roomId + '"]').forEach(btn => {
+    btn.classList.toggle('active', list.includes(roomId));
+  });
+}
+
+function updateWishlistCount() {
+  const count = getWishlist().length;
+  document.querySelectorAll('.wishlist-count').forEach(el => {
+    el.textContent = count;
+    el.style.display = count > 0 ? 'flex' : 'none';
+  });
+}
+
+/* ============ WISHLIST PANEL ============ */
+function openWishlistPanel() {
+  renderWishlistPanel();
+  document.getElementById('wishlistPanel').classList.add('active');
+  document.getElementById('wishlistOverlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeWishlistPanel() {
+  document.getElementById('wishlistPanel').classList.remove('active');
+  document.getElementById('wishlistOverlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function renderWishlistPanel() {
+  const list = getWishlist();
+  const body = document.getElementById('wishlistPanelBody');
+  const actions = document.getElementById('wishlistActions');
+  if (!body) return;
+
+  if (list.length === 0) {
+    body.innerHTML = `
+      <div class="wishlist-empty">
+        <i class="fas fa-heart"></i>
+        <h4>Your Wishlist is Empty</h4>
+        <p>Start saving your favourite rooms to see them here.</p>
+      </div>
+    `;
+    if (actions) actions.style.display = 'none';
+    return;
+  }
+
+  const rooms = ROOMS_DB.filter(r => list.includes(r.id));
+  body.innerHTML = rooms.map(room => `
+    <div class="wishlist-item">
+      <img src="${room.img}" alt="${room.name}">
+      <div class="wishlist-item-info">
+        <h4>${room.name}</h4>
+        <div class="meta">${room.type.toUpperCase()} · ${room.bedType} bed</div>
+        <div class="price">$${room.price}/night</div>
+      </div>
+      <button class="wishlist-item-remove" onclick="removeFromWishlist('${room.id}')" title="Remove">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  `).join('');
+
+  if (actions) actions.style.display = 'flex';
+}
+
+function removeFromWishlist(roomId) {
+  let list = getWishlist();
+  list = list.filter(id => id !== roomId);
+  saveWishlist(list);
+  renderWishlistPanel();
+  document.querySelectorAll('.wishlist-btn[data-room="' + roomId + '"]').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  showToast('info', 'Removed', 'Room removed from wishlist');
+}
+
+/* ============ TOAST (Enhanced 4-types) ============ */
 let toastTimer;
-function showToast(msg) {
+function showToast(type, title, message) {
+  // Support old signature: showToast('message')
+  if (arguments.length === 1) {
+    message = title;
+    title = 'Notice';
+    type = 'info';
+  } else if (arguments.length === 2 && ['success','error','warning','info'].indexOf(type) === -1) {
+    message = title;
+    title = type;
+    type = 'info';
+  }
+
   const toast = document.getElementById('toast');
-  const toastMsg = document.getElementById('toastMsg');
   if (!toast) return;
-  toastMsg.textContent = msg;
+
+  const icons = {
+    success: 'fa-check-circle',
+    error: 'fa-times-circle',
+    warning: 'fa-exclamation-triangle',
+    info: 'fa-info-circle'
+  };
+
+  toast.className = 'toast toast-' + type;
+  toast.innerHTML = `
+    <div class="toast-icon"><i class="fas ${icons[type] || icons.info}"></i></div>
+    <div class="toast-content">
+      <div class="toast-title">${title}</div>
+      <div class="toast-msg">${message}</div>
+    </div>
+    <button class="toast-close" onclick="hideToast()"><i class="fas fa-times"></i></button>
+  `;
+
   toast.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
+}
+
+function hideToast() {
+  const toast = document.getElementById('toast');
+  if (toast) toast.classList.remove('show');
+  clearTimeout(toastTimer);
+}
+
+/* ============ CONFETTI ============ */
+function launchConfetti() {
+  const canvas = document.getElementById('confettiCanvas');
+  if (!canvas) return;
+
+  canvas.classList.add('active');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const colors = ['#C6A15B', '#E9D7A7', '#A8893A', '#F5E6C0', '#FFF3D6', '#ffffff'];
+  const particles = [];
+
+  for (let i = 0; i < 180; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: -20 - Math.random() * 200,
+      w: 8 + Math.random() * 10,
+      h: 6 + Math.random() * 8,
+      vx: (Math.random() - 0.5) * 4,
+      vy: 3 + Math.random() * 4,
+      rot: Math.random() * Math.PI * 2,
+      vrot: (Math.random() - 0.5) * 0.2,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      shape: Math.random() > 0.5 ? 'rect' : 'circle'
+    });
+  }
+
+  let frame = 0;
+  const maxFrames = 280;
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.06;
+      p.rot += p.vrot;
+
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = Math.max(0, 1 - frame / maxFrames);
+      if (p.shape === 'rect') {
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      } else {
+        ctx.beginPath();
+        ctx.arc(0, 0, p.w / 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    });
+
+    frame++;
+    if (frame < maxFrames) {
+      requestAnimationFrame(draw);
+    } else {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      canvas.classList.remove('active');
+    }
+  }
+
+  draw();
+}
+
+/* ============ COUPON ============ */
+function applyCoupon(inputId, context) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  const code = input.value.trim().toUpperCase();
+  if (!code) {
+    showToast('warning', 'Empty code', 'Please enter a coupon code');
+    return;
+  }
+  if (!COUPONS[code]) {
+    showToast('error', 'Invalid Coupon', 'This code is not valid');
+    return;
+  }
+  activeCoupon = { code, ...COUPONS[code] };
+  showToast('success', 'Coupon Applied!', activeCoupon.label + ' on your booking');
+  renderCouponApplied(context);
+  updatePriceSummary();
+}
+
+function removeCoupon(context) {
+  activeCoupon = null;
+  showToast('info', 'Coupon removed', 'Discount removed from booking');
+  renderCouponApplied(context);
+  updatePriceSummary();
+}
+
+function renderCouponApplied(context) {
+  const target = document.getElementById('coupon' + (context === 'modal' ? 'Modal' : 'Card') + 'Box');
+  if (!target) return;
+
+  if (activeCoupon) {
+    target.innerHTML = `
+      <div class="coupon-applied">
+        <i class="fas fa-check-circle"></i>
+        <span><strong>${activeCoupon.code}</strong> · ${activeCoupon.label}</span>
+        <button class="remove-coupon" onclick="removeCoupon('${context}')">Remove</button>
+      </div>
+    `;
+  } else {
+    target.innerHTML = `
+      <div class="coupon-input-row">
+        <input type="text" id="coupon${context === 'modal' ? 'Modal' : 'Card'}Input" placeholder="Enter coupon code" maxlength="15">
+        <button class="coupon-apply-btn" onclick="applyCoupon('coupon${context === 'modal' ? 'Modal' : 'Card'}Input', '${context}')">Apply</button>
+      </div>
+      <div class="coupon-hints">
+        <span class="coupon-hint" onclick="quickCoupon('GRAND10','${context}')">GRAND10</span>
+        <span class="coupon-hint" onclick="quickCoupon('FESTIVE20','${context}')">FESTIVE20</span>
+        <span class="coupon-hint" onclick="quickCoupon('WELCOME50','${context}')">WELCOME50</span>
+      </div>
+    `;
+  }
+}
+
+function quickCoupon(code, context) {
+  const inputId = 'coupon' + (context === 'modal' ? 'Modal' : 'Card') + 'Input';
+  const input = document.getElementById(inputId);
+  if (input) input.value = code;
+  applyCoupon(inputId, context);
 }
 
 /* ============ BOOKING MODAL ============ */
@@ -250,6 +492,10 @@ function openBookingModal(roomIdOrTitle) {
   if (savedUser.email) document.getElementById('modalEmail').value = savedUser.email;
   if (savedUser.phone) document.getElementById('modalPhone').value = savedUser.phone;
 
+  // Reset coupon UI
+  activeCoupon = null;
+  renderCouponApplied('modal');
+
   updatePriceSummary();
 
   modal.classList.add('active');
@@ -264,6 +510,32 @@ function closeBookingModal() {
 }
 
 /* ============ PRICE CALCULATION ============ */
+function calculateTotal(room, checkin, checkout, guests, applyDiscount) {
+  const d1 = new Date(checkin);
+  const d2 = new Date(checkout);
+  let nights = Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24));
+  if (nights < 1 || isNaN(nights)) nights = 1;
+
+  let guestCount = parseInt(guests) || 1;
+  let extraGuestFee = 0;
+  if (guestCount > 2) extraGuestFee = (guestCount - 2) * 30 * nights;
+
+  const subtotal = (room.price * nights) + extraGuestFee;
+  let discount = 0;
+  if (applyDiscount && activeCoupon) {
+    if (activeCoupon.type === 'percent') {
+      discount = Math.round(subtotal * activeCoupon.value / 100);
+    } else if (activeCoupon.type === 'flat') {
+      discount = Math.min(activeCoupon.value, subtotal);
+    }
+  }
+  const afterDiscount = subtotal - discount;
+  const taxes = Math.round(afterDiscount * 0.12);
+  const total = afterDiscount + taxes;
+
+  return { nights, subtotal, discount, taxes, total };
+}
+
 function updatePriceSummary() {
   const roomSelect = document.getElementById('modalRoom');
   const checkin = document.getElementById('modalCheckin').value;
@@ -275,36 +547,26 @@ function updatePriceSummary() {
   const room = ROOMS_DB.find(r => r.id === roomSelect.value);
   if (!room) return;
 
-  const d1 = new Date(checkin);
-  const d2 = new Date(checkout);
-  let nights = Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24));
-  if (nights < 1 || isNaN(nights)) nights = 1;
-
-  let guestCount = parseInt(guests);
-  if (isNaN(guestCount)) guestCount = 1;
-  let extraGuestFee = 0;
-  if (guestCount > 2) extraGuestFee = (guestCount - 2) * 30;
-
-  const subtotal = (room.price * nights) + (extraGuestFee * nights);
-  const taxes = Math.round(subtotal * 0.12);
-  const total = subtotal + taxes;
+  const c = calculateTotal(room, checkin, checkout, guests, true);
 
   const summary = document.getElementById('priceSummary');
   if (summary) {
     summary.innerHTML = `
       <div>
-        <div style="font-size:0.85rem;color:var(--text-muted);">${room.name} × ${nights} night${nights > 1 ? 's' : ''}</div>
-        <div style="font-size:0.85rem;color:var(--text-muted);margin-top:4px;">Taxes & fees (12%)</div>
+        <div style="font-size:0.85rem;color:var(--text-muted);">${room.name} × ${c.nights} night${c.nights > 1 ? 's' : ''}</div>
+        ${c.discount > 0 ? `<div style="font-size:0.85rem;color:#2E7D32;margin-top:4px;"><i class="fas fa-tag"></i> Discount (${activeCoupon.code})</div>` : ''}
+        <div style="font-size:0.85rem;color:var(--text-muted);margin-top:4px;">Taxes (12%)</div>
       </div>
       <div style="text-align:right;">
-        <div style="font-size:0.95rem;">$${subtotal.toLocaleString()}</div>
-        <div style="font-size:0.85rem;color:var(--text-muted);margin-top:4px;">$${taxes.toLocaleString()}</div>
+        <div style="font-size:0.95rem;">$${c.subtotal.toLocaleString()}</div>
+        ${c.discount > 0 ? `<div style="font-size:0.85rem;color:#2E7D32;margin-top:4px;">-$${c.discount.toLocaleString()}</div>` : ''}
+        <div style="font-size:0.85rem;color:var(--text-muted);margin-top:4px;">$${c.taxes.toLocaleString()}</div>
       </div>
     `;
   }
 
   const totalEl = document.getElementById('totalPrice');
-  if (totalEl) totalEl.textContent = '$' + total.toLocaleString();
+  if (totalEl) totalEl.textContent = '$' + c.total.toLocaleString();
 }
 
 /* ============ SUBMIT BOOKING ============ */
@@ -320,18 +582,18 @@ function submitBooking(e) {
   const guests = document.getElementById('modalGuests').value;
 
   if (!name || !email || !phone) {
-    showToast('Please fill all required fields');
+    showToast('error', 'Missing info', 'Please fill all required fields');
     return;
   }
 
   const room = ROOMS_DB.find(r => r.id === roomId);
-  if (!room) { showToast('Room not found'); return; }
+  if (!room) { showToast('error', 'Room not found', 'Please try again'); return; }
 
   const d1 = new Date(checkin);
   const d2 = new Date(checkout);
-  let nights = Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24));
-  if (nights < 1 || isNaN(nights)) { showToast('Invalid dates'); return; }
+  if (d2 <= d1) { showToast('error', 'Invalid dates', 'Check-out must be after check-in'); return; }
 
+  const c = calculateTotal(room, checkin, checkout, guests, true);
   const ref = 'GA' + Date.now().toString().slice(-8).toUpperCase();
 
   const booking = {
@@ -339,8 +601,12 @@ function submitBooking(e) {
     roomId: room.id,
     roomName: room.name,
     price: room.price,
-    checkin, checkout, nights, guests,
-    total: room.price * nights,
+    checkin, checkout, nights: c.nights, guests,
+    subtotal: c.subtotal,
+    discount: c.discount,
+    couponCode: activeCoupon ? activeCoupon.code : null,
+    taxes: c.taxes,
+    total: c.total,
     createdAt: new Date().toISOString()
   };
 
@@ -356,18 +622,23 @@ function submitBooking(e) {
   document.getElementById('bookingRef').textContent = ref;
   document.getElementById('successMessage').innerHTML = `
     <strong>${name}</strong>, your booking is confirmed!<br>
-    ${room.name} · ${nights} night${nights > 1 ? 's' : ''}<br>
+    ${room.name} · ${c.nights} night${c.nights > 1 ? 's' : ''}<br>
     ${checkin} → ${checkout}<br>
+    Total: <strong>$${c.total.toLocaleString()}</strong><br>
     Confirmation sent to <strong>${email}</strong>
   `;
 
-  showToast('Booking confirmed! Ref: ' + ref);
+  // Confetti!
+  setTimeout(() => launchConfetti(), 300);
+
+  showToast('success', 'Booking Confirmed!', 'Ref: ' + ref);
+  activeCoupon = null;
 }
 
 /* ============ CONTACT FORM ============ */
 function submitContact(e) {
   e.preventDefault();
-  showToast('Message sent! We will respond within 24 hours.');
+  showToast('success', 'Message sent!', 'We will respond within 24 hours.');
   e.target.reset();
 }
 
@@ -381,12 +652,21 @@ function renderRoomCard(room) {
     ? '<span class="tag ac"><i class="fas fa-snowflake"></i> AC</span>'
     : '<span class="tag non-ac"><i class="fas fa-fan"></i> Non-AC</span>';
 
+  const inWishlist = isInWishlist(room.id);
+  const discountBadge = room.discount
+    ? `<div class="discount-badge"><i class="fas fa-tag"></i> ${room.discount}% OFF</div>`
+    : '';
+
   return `
-    <article class="room-card" data-type="${room.type}" data-bed="${room.bedType}" onclick="if(event.target.tagName !== 'A' && !event.target.closest('a')) window.location.href='room-details.html?id=${room.id}'">
+    <article class="room-card" data-type="${room.type}" data-bed="${room.bedType}" onclick="if(event.target.tagName !== 'A' && !event.target.closest('a') && !event.target.closest('.wishlist-btn')) window.location.href='room-details.html?id=${room.id}'">
       <div class="room-tags">
         ${typeTag}
         <span class="tag">${room.bedType.charAt(0).toUpperCase() + room.bedType.slice(1)}</span>
       </div>
+      ${discountBadge}
+      <button class="wishlist-btn ${inWishlist ? 'active' : ''}" data-room="${room.id}" onclick="toggleWishlist('${room.id}', event)" title="${inWishlist ? 'Remove from wishlist' : 'Add to wishlist'}">
+        <i class="fa-heart ${inWishlist ? 'fas' : 'far'}"></i>
+      </button>
       <div class="room-img">
         <img src="${room.img}" alt="${room.name}">
         <div class="room-price-badge">$${room.price.toLocaleString()} <small>/night</small></div>
@@ -422,25 +702,92 @@ function filterRooms(filterType, btnEl) {
   });
 }
 
+/* ============ LIGHTBOX ============ */
+let lightboxImages = [];
+let lightboxIndex = 0;
+
+function openLightbox(images, index) {
+  lightboxImages = images;
+  lightboxIndex = index;
+  const lb = document.getElementById('lightbox');
+  if (!lb) return;
+  document.getElementById('lightboxImg').src = images[index];
+  document.getElementById('lightboxCounter').textContent = (index + 1) + ' / ' + images.length;
+  lb.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  const lb = document.getElementById('lightbox');
+  if (!lb) return;
+  lb.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function lightboxNavigate(dir) {
+  lightboxIndex = (lightboxIndex + dir + lightboxImages.length) % lightboxImages.length;
+  document.getElementById('lightboxImg').src = lightboxImages[lightboxIndex];
+  document.getElementById('lightboxCounter').textContent = (lightboxIndex + 1) + ' / ' + lightboxImages.length;
+}
+
+/* ============ SCROLL PROGRESS + BACK TO TOP ============ */
+function initScrollFeatures() {
+  const progress = document.getElementById('scrollProgress');
+  const backBtn = document.getElementById('backToTop');
+
+  function onScroll() {
+    const h = document.documentElement;
+    const scrolled = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+    if (progress) progress.style.width = scrolled + '%';
+    if (backBtn) {
+      if (h.scrollTop > 400) backBtn.classList.add('show');
+      else backBtn.classList.remove('show');
+    }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  if (backBtn) {
+    backBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+}
+
 /* ============ INIT ============ */
 document.addEventListener('DOMContentLoaded', function () {
+  // Menu
   const menuToggle = document.getElementById('menuToggle');
   const navLinks = document.getElementById('navLinks');
   if (menuToggle && navLinks) {
     menuToggle.addEventListener('click', () => navLinks.classList.toggle('show'));
   }
 
+  // Modal close
   const modal = document.getElementById('bookingModal');
   if (modal) {
     modal.addEventListener('click', (e) => { if (e.target === modal) closeBookingModal(); });
   }
 
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeBookingModal();
+    if (e.key === 'Escape') {
+      closeBookingModal();
+      closeLightbox();
+      if (typeof closeWishlistPanel === 'function') closeWishlistPanel();
+    }
+    if (e.key === 'ArrowLeft' && document.getElementById('lightbox')?.classList.contains('active')) {
+      lightboxNavigate(-1);
+    }
+    if (e.key === 'ArrowRight' && document.getElementById('lightbox')?.classList.contains('active')) {
+      lightboxNavigate(1);
+    }
   });
 
   ['modalRoom', 'modalCheckin', 'modalCheckout', 'modalGuests'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('change', updatePriceSummary);
   });
+
+  updateWishlistCount();
+  initScrollFeatures();
 });
